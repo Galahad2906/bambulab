@@ -10,8 +10,8 @@ import botella from '../assets/productos/botella.jpg'
 
 const productos = [
   { nombre: "Alcancías", imagen: alcancias },
-  { nombre: "Choperas (Negro)", imagen: choperas1 },
-  { nombre: "Choperas (Rojo)", imagen: choperas2 },
+  { nombre: "Choperas", imagen: choperas1 },
+  { nombre: "Choperas", imagen: choperas2 },
   { nombre: "Lentes", imagen: lentes },
   { nombre: "Abanicos", imagen: abanicos },
   { nombre: "Copas", imagen: copas },
