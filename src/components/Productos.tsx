@@ -1,13 +1,21 @@
 import { FaWhatsapp } from 'react-icons/fa'
 
+import alcancias from '../assets/productos/alcancias.jpg'
+import choperas1 from '../assets/productos/choperas1.jpg'
+import choperas2 from '../assets/productos/choperas2.jpg'
+import lentes from '../assets/productos/lentes.jpg'
+import abanicos from '../assets/productos/abanicos.jpg'
+import copas from '../assets/productos/copas.jpg'
+import botella from '../assets/productos/botella.jpg'
+
 const productos = [
-  { nombre: "Alcancías", imagen: "/src/assets/productos/alcancias.jpg" },
-  { nombre: "Choperas (Negro)", imagen: "/src/assets/productos/choperas1.jpg" },
-  { nombre: "Choperas (Rojo)", imagen: "/src/assets/productos/choperas2.jpg" },
-  { nombre: "Lentes", imagen: "/src/assets/productos/lentes.jpg" },
-  { nombre: "Abanicos", imagen: "/src/assets/productos/abanicos.jpg" },
-  { nombre: "Copas", imagen: "/src/assets/productos/copas.jpg" },
-  { nombre: "Botellas", imagen: "/src/assets/productos/botella.jpg" },
+  { nombre: "Alcancías", imagen: alcancias },
+  { nombre: "Choperas (Negro)", imagen: choperas1 },
+  { nombre: "Choperas (Rojo)", imagen: choperas2 },
+  { nombre: "Lentes", imagen: lentes },
+  { nombre: "Abanicos", imagen: abanicos },
+  { nombre: "Copas", imagen: copas },
+  { nombre: "Botellas", imagen: botella },
 ]
 
 const Productos = () => {
