@@ -2,7 +2,9 @@ import Navbar from './components/Navbar'
 import Productos from './components/Productos'
 import Servicios from './components/Servicios'
 import SobreNosotros from './components/SobreNosotros'
+import Contacto from './components/Contacto';
 import Footer from './components/Footer'
+import FloatingWhatsapp from './components/FloatingWhatsapp'
 
 function App() {
   return (
@@ -31,7 +33,11 @@ function App() {
       <Productos />
       <Servicios />
       <SobreNosotros />
+      <Contacto />
       <Footer />
+
+      {/* Botón flotante de WhatsApp */}
+      <FloatingWhatsapp />
     </div>
   )
 }
