@@ -3,8 +3,8 @@ import logo from '../assets/logo-blanco.png'
 
 const Footer = () => {
   return (
-    <footer className="bg-bambu text-white py-10 px-6 mt-16" data-aos="fade">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+    <footer className="bg-bambu text-white py-10 px-4 sm:px-6 mt-16" data-aos="fade">
+      <div className="max-w-6xl mx-auto grid gap-8 sm:gap-6 grid-cols-1 md:grid-cols-3 items-center">
         {/* Logo y nombre */}
         <div className="flex items-center gap-3 justify-center md:justify-start">
           <img src={logo} alt="Bambulab logo" className="h-10" />
@@ -12,7 +12,7 @@ const Footer = () => {
         </div>
 
         {/* Menú de navegación */}
-        <nav className="flex justify-center gap-6 text-sm font-medium">
+        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium">
           <a href="#inicio" className="hover:underline">Inicio</a>
           <a href="#productos" className="hover:underline">Productos</a>
           <a href="#servicios" className="hover:underline">Servicios</a>

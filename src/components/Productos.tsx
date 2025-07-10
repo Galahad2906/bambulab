@@ -20,13 +20,16 @@ const productos = [
 
 const Productos = () => {
   return (
-    <section id="productos" className="bg-white py-16 px-4">
-      <h2 className="text-3xl font-bold text-center text-bambu mb-10">Productos destacados</h2>
+    <section id="productos" className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <h2 className="text-3xl font-bold text-center text-bambu mb-10">
+        Productos destacados
+      </h2>
+
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
         {productos.map((prod, i) => (
           <div
             key={i}
-            className="relative w-64 rounded-lg shadow-md overflow-hidden bg-white group"
+            className="relative w-full max-w-xs rounded-lg shadow-md overflow-hidden bg-white group"
             data-aos="fade-up"
             data-aos-delay={i * 100}
           >
@@ -36,7 +39,9 @@ const Productos = () => {
               className="h-48 w-full object-cover"
             />
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-800">{prod.nombre}</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                {prod.nombre}
+              </h3>
             </div>
             <a
               href={`https://wa.me/595986271647?text=Hola,%20quiero%20info%20sobre%20${encodeURIComponent(prod.nombre)}`}

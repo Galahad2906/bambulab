@@ -1,16 +1,26 @@
-import Navbar from './components/Navbar'
-import Productos from './components/Productos'
-import Servicios from './components/Servicios'
-import SobreNosotros from './components/SobreNosotros'
+import { useEffect, useState } from 'react';
+import Navbar from './components/Navbar';
+import Productos from './components/Productos';
+import Servicios from './components/Servicios';
+import SobreNosotros from './components/SobreNosotros';
 import Contacto from './components/Contacto';
-import Footer from './components/Footer'
-import FloatingWhatsapp from './components/FloatingWhatsapp'
+import Footer from './components/Footer';
+import Loader from './components/Loader';
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulamos carga por 2.5 segundos
+    const timer = setTimeout(() => setLoading(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <Loader />;
+
   return (
     <div className="bg-bambu text-white min-h-screen">
       <Navbar />
-
       <main
         id="inicio"
         className="bg-bambu text-white py-24 px-6 text-center"
@@ -29,17 +39,13 @@ function App() {
           Ver catálogo
         </a>
       </main>
-
       <Productos />
       <Servicios />
       <SobreNosotros />
       <Contacto />
       <Footer />
-
-      {/* Botón flotante de WhatsApp */}
-      <FloatingWhatsapp />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

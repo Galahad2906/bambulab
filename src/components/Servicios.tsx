@@ -20,13 +20,13 @@ const servicios = [
 
 const Servicios = () => {
   return (
-    <section id="servicios" className="bg-gray-100 py-16 px-6 text-center">
+    <section id="servicios" className="bg-gray-100 py-16 px-4 sm:px-6 text-center">
       <h2 className="text-3xl font-bold text-bambu mb-12">Servicios</h2>
-      <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto">
+      <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 justify-items-center max-w-6xl mx-auto">
         {servicios.map((serv, i) => (
           <div
             key={i}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+            className="w-full max-w-xs bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
             data-aos="zoom-in"
             data-aos-delay={i * 150}
           >
