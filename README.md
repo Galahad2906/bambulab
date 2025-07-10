@@ -1,12 +1,12 @@
 # 🌿 Bambulab
 
-**Sitio web profesional para Bambulab** – una marca paraguaya dedicada a la creación de artículos personalizados, diseño gráfico, afiches con QR, y soluciones creativas para marcas y eventos.
+**Sitio web profesional para Bambulab** – una marca paraguaya dedicada a la creación de artículos personalizados, diseño gráfico, afiches con QR y soluciones creativas para marcas y eventos.
 
 ---
 
 ## 🧠 ¿Qué es Bambulab?
 
-Bambulab nace con la misión de diseñar artículos únicos y personalizados para momentos inolvidables. Desde Encarnación, trabajamos con amor, estilo y creatividad, ofreciendo desde choperas hasta diseño de identidad visual para emprendimientos.
+Bambulab nace con la misión de diseñar artículos únicos y personalizados para momentos inolvidables. Desde Encarnación, trabajamos con amor, estilo y creatividad, ofreciendo desde choperas personalizadas hasta diseño de identidad visual para emprendimientos.
 
 ---
 
@@ -19,28 +19,30 @@ Bambulab nace con la misión de diseñar artículos únicos y personalizados par
 ## 🛠️ Tecnologías utilizadas
 
 - **React + Vite + TypeScript**
-- **Tailwind CSS** (diseño responsive y moderno)
-- **React Icons** (íconos)
-- **AOS (Animate on Scroll)** para animaciones scroll
-- **Vercel** para despliegue automático desde GitHub
+- **Tailwind CSS** – diseño moderno y responsive
+- **React Icons** – iconografía profesional
+- **AOS (Animate On Scroll)** – animaciones al hacer scroll
+- **Vercel** – despliegue continuo desde GitHub
 
 ---
 
 ## ✨ Funcionalidades principales
 
-- Hero con mensaje institucional y CTA
-- Productos destacados con imágenes reales
+- Hero institucional con CTA
+- Galería de productos con imágenes reales
 - Botones de WhatsApp personalizados por producto
-- Servicios con íconos y descripciones reales
-- Sección Sobre Nosotros con imagen personalizada
-- Footer con redes, navegación y créditos
+- Servicios visuales con íconos representativos
+- Sección "Sobre Nosotros" con imagen ilustrativa
+- Formulario de contacto que redirige a WhatsApp
+- Footer con redes sociales y navegación
+- Loader animado al ingresar
 - Animaciones suaves al hacer scroll
 
 ---
 
 ## 📱 Responsive
 
-Totalmente optimizado para móviles, tablets y desktop.
+Diseño completamente adaptado a **móviles, tablets y escritorio**.
 
 ---
 
@@ -53,4 +55,4 @@ Desarrollado por **Guillermo Zaracho Zayas**
 
 ## 📝 Licencia
 
-Este proyecto es de uso privado para Bambulab. Todos los derechos reservados © 2025.
+Este proyecto es de uso privado para **Bambulab**. Todos los derechos reservados © 2025.

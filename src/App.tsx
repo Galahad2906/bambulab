@@ -1,26 +1,30 @@
-import { useEffect, useState } from 'react';
-import Navbar from './components/Navbar';
-import Productos from './components/Productos';
-import Servicios from './components/Servicios';
-import SobreNosotros from './components/SobreNosotros';
-import Contacto from './components/Contacto';
-import Footer from './components/Footer';
-import Loader from './components/Loader';
+import { useEffect, useState } from 'react'
+import Navbar from './components/Navbar'
+import Productos from './components/Productos'
+import Servicios from './components/Servicios'
+import Testimonios from './components/Testimonios'
+import SobreNosotros from './components/SobreNosotros'
+import Contacto from './components/Contacto'
+import Footer from './components/Footer'
+import Loader from './components/Loader'
+
+import 'swiper/css'
+import 'swiper/css/pagination'
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulamos carga por 2.5 segundos
-    const timer = setTimeout(() => setLoading(false), 2500);
-    return () => clearTimeout(timer);
-  }, []);
+    const timer = setTimeout(() => setLoading(false), 2500)
+    return () => clearTimeout(timer)
+  }, [])
 
-  if (loading) return <Loader />;
+  if (loading) return <Loader />
 
   return (
     <div className="bg-bambu text-white min-h-screen">
       <Navbar />
+
       <main
         id="inicio"
         className="bg-bambu text-white py-24 px-6 text-center"
@@ -39,13 +43,15 @@ function App() {
           Ver catálogo
         </a>
       </main>
+
       <Productos />
       <Servicios />
+      <Testimonios />
       <SobreNosotros />
       <Contacto />
       <Footer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
