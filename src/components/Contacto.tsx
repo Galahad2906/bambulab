@@ -2,12 +2,13 @@ import { useState } from 'react';
 
 const Contacto = () => {
   const [nombre, setNombre] = useState('');
-  const [email, setEmail] = useState('');
+  const [ciudad, setCiudad] = useState('');
+  const [producto, setProducto] = useState('');
   const [mensaje, setMensaje] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const texto = `Hola, soy ${nombre}. Mi correo es ${email}. Quiero consultar lo siguiente: ${mensaje}`;
+    const texto = `Hola, soy ${nombre} de ${ciudad}. Estoy interesado/a en: ${producto}. Quiero consultar lo siguiente: ${mensaje}`;
     const url = `https://wa.me/595986271647?text=${encodeURIComponent(texto)}`;
     window.open(url, '_blank');
   };
@@ -38,10 +39,18 @@ const Contacto = () => {
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
         <input
-          type="email"
-          placeholder="Tu correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Tu ciudad"
+          value={ciudad}
+          onChange={(e) => setCiudad(e.target.value)}
+          required
+          className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
+        />
+        <input
+          type="text"
+          placeholder="Producto de interés"
+          value={producto}
+          onChange={(e) => setProducto(e.target.value)}
           required
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
