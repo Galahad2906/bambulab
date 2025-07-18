@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ✅ Fix para evitar scroll horizontal en mobile */
+body {
+  overflow-x: hidden;
+}

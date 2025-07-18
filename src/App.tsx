@@ -22,12 +22,12 @@ function App() {
   if (loading) return <Loader />
 
   return (
-    <div className="bg-bambu text-white min-h-screen">
+    <div className="bg-bambu text-white min-h-screen overflow-x-hidden">
       <Navbar />
 
       <main
         id="inicio"
-        className="bg-bambu text-white py-24 px-6 text-center"
+        className="bg-bambu text-white py-24 px-4 sm:px-6 text-center"
         data-aos="fade"
       >
         <h1 className="text-4xl md:text-5xl font-black leading-tight">

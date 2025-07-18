@@ -9,13 +9,13 @@ import copas from '../assets/productos/copas.jpg'
 import botella from '../assets/productos/botella.jpg'
 
 const productos = [
-  { nombre: "Alcancías", imagen: alcancias },
-  { nombre: "Choperas", imagen: choperas1 },
-  { nombre: "Choperas", imagen: choperas2 },
-  { nombre: "Lentes", imagen: lentes },
-  { nombre: "Abanicos", imagen: abanicos },
-  { nombre: "Copas", imagen: copas },
-  { nombre: "Botellas", imagen: botella },
+  { nombre: 'Alcancías', imagen: alcancias },
+  { nombre: 'Choperas', imagen: choperas1 },
+  { nombre: 'Choperas', imagen: choperas2 },
+  { nombre: 'Lentes', imagen: lentes },
+  { nombre: 'Abanicos', imagen: abanicos },
+  { nombre: 'Copas', imagen: copas },
+  { nombre: 'Botellas', imagen: botella },
 ]
 
 const Productos = () => {
@@ -25,7 +25,7 @@ const Productos = () => {
         Productos destacados
       </h2>
 
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center">
         {productos.map((prod, i) => (
           <div
             key={i}
@@ -44,7 +44,9 @@ const Productos = () => {
               </h3>
             </div>
             <a
-              href={`https://wa.me/595986271647?text=Hola,%20quiero%20info%20sobre%20${encodeURIComponent(prod.nombre)}`}
+              href={`https://wa.me/595986271647?text=Hola,%20quiero%20info%20sobre%20${encodeURIComponent(
+                prod.nombre
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="absolute bottom-2 right-2 text-green-500 hover:scale-110 transition-transform"

@@ -4,9 +4,9 @@ import logo from '../assets/logo-blanco.png'
 const Footer = () => {
   return (
     <footer className="bg-bambu text-white py-10 px-4 sm:px-6 mt-16" data-aos="fade">
-      <div className="max-w-6xl mx-auto grid gap-8 sm:gap-6 grid-cols-1 md:grid-cols-3 items-center">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center md:text-left">
         {/* Logo y nombre */}
-        <div className="flex items-center gap-3 justify-center md:justify-start">
+        <div className="flex items-center justify-center md:justify-start gap-3">
           <img src={logo} alt="Bambulab logo" className="h-10" />
           <span className="font-bold text-lg">Bambulab</span>
         </div>

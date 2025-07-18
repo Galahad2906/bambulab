@@ -30,37 +30,39 @@ const testimonios = [
 
 const Testimonios = () => {
   return (
-    <section className="bg-gray-100 py-20 px-6 text-center" id="testimonios">
+    <section className="bg-gray-100 py-20 px-4 sm:px-6 lg:px-8 text-center" id="testimonios">
       <h2 className="text-3xl font-bold text-bambu mb-10">
         Lo que dicen nuestros clientes
       </h2>
-      <Swiper
-        modules={[Autoplay, Pagination]}
-        spaceBetween={30}
-        slidesPerView={1}
-        breakpoints={{
-          640: { slidesPerView: 1 },
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-        }}
-        autoplay={{ delay: 4000 }}
-        pagination={{ clickable: true }}
-        loop
-      >
-        {testimonios.map((testi, index) => (
-          <SwiperSlide key={index}>
-            <div className="bg-white p-6 rounded-xl shadow-md max-w-sm mx-auto">
-              <img
-                src={testi.avatar}
-                alt={testi.nombre}
-                className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-bambu object-cover"
-              />
-              <p className="italic text-gray-700 mb-3">“{testi.message || testi.mensaje}”</p>
-              <p className="font-bold text-bambu">— {testi.nombre}</p>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <div className="max-w-6xl mx-auto">
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          spaceBetween={30}
+          slidesPerView={1}
+          breakpoints={{
+            640: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
+          autoplay={{ delay: 4000 }}
+          pagination={{ clickable: true }}
+          loop
+        >
+          {testimonios.map((testi, index) => (
+            <SwiperSlide key={index} className="mb-6">
+              <div className="bg-white p-6 rounded-xl shadow-md max-w-sm mx-auto">
+                <img
+                  src={testi.avatar}
+                  alt={testi.nombre}
+                  className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-bambu object-cover"
+                />
+                <p className="italic text-gray-700 mb-3">“{testi.mensaje}”</p>
+                <p className="font-bold text-bambu">— {testi.nombre}</p>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
     </section>
   )
 }
