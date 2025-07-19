@@ -20,12 +20,19 @@ const productos = [
 
 const Productos = () => {
   return (
-    <section id="productos" className="bg-white py-16 px-4 sm:px-6 lg:px-8">
-      <h2 className="text-3xl font-bold text-center text-bambu mb-10">
-        Productos destacados
-      </h2>
+    <section
+      id="productos"
+      role="region"
+      aria-label="Catálogo de productos personalizados"
+      className="py-20 px-4 sm:px-6 bg-white text-bambu"
+      data-aos="fade-up"
+    >
+      <div className="max-w-6xl mx-auto text-center mb-10">
+        <h2 className="text-3xl font-bold">Nuestros productos</h2>
+        <p className="mt-2 text-gray-700">Diseños únicos hechos a medida</p>
+      </div>
 
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center">
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center mx-auto max-w-6xl">
         {productos.map((prod, i) => (
           <div
             key={i}

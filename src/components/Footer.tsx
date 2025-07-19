@@ -3,7 +3,12 @@ import logo from '../assets/logo-blanco.png'
 
 const Footer = () => {
   return (
-    <footer className="bg-bambu text-white py-10 px-4 sm:px-6 mt-16" data-aos="fade">
+    <footer
+      className="bg-bambu text-white py-10 px-4 sm:px-6 mt-16"
+      role="contentinfo"
+      aria-label="Pie de página con enlaces y redes sociales"
+      data-aos="fade"
+    >
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center md:text-left">
         {/* Logo y nombre */}
         <div className="flex items-center justify-center md:justify-start gap-3">

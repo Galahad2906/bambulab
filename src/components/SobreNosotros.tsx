@@ -2,11 +2,16 @@ import sobreImg from '../assets/sobre-nosotros.png'
 
 const SobreNosotros = () => {
   return (
-    <section id="sobre" className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <section
+      id="sobre"
+      role="region"
+      aria-label="Información sobre Bambulab"
+      className="bg-white py-16 px-4 sm:px-6 lg:px-8"
+    >
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
         <img
           src={sobreImg}
-          alt="Sobre Bambulab"
+          alt="Taller de Bambulab o imagen representativa de la marca"
           className="w-full max-w-md mx-auto md:mx-0 rounded-lg shadow-lg"
           data-aos="fade-right"
         />

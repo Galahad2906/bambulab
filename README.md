@@ -1,6 +1,6 @@
 # 🌿 Bambulab
 
-**Sitio web profesional para Bambulab** – una marca paraguaya dedicada a la creación de artículos personalizados, diseño gráfico, afiches con QR y soluciones creativas para marcas y eventos.
+**Sitio web profesional para Bambulab** – marca paraguaya dedicada a la creación de artículos personalizados, diseño gráfico, afiches con QR y soluciones creativas para marcas y eventos.
 
 ---
 
@@ -21,7 +21,8 @@ Bambulab nace con la misión de diseñar artículos únicos y personalizados par
 - **React + Vite + TypeScript**
 - **Tailwind CSS** – diseño moderno y responsive
 - **React Icons** – iconografía profesional
-- **AOS (Animate On Scroll)** – animaciones al hacer scroll
+- **AOS (Animate On Scroll)** – animaciones suaves al hacer scroll
+- **SwiperJS** – carrusel de testimonios
 - **Vercel** – despliegue continuo desde GitHub
 
 ---
@@ -32,11 +33,13 @@ Bambulab nace con la misión de diseñar artículos únicos y personalizados par
 - Galería de productos con imágenes reales
 - Botones de WhatsApp personalizados por producto
 - Servicios visuales con íconos representativos
-- Sección "Sobre Nosotros" con imagen ilustrativa
-- Formulario de contacto que redirige a WhatsApp
-- Footer con redes sociales y navegación
-- Loader animado al ingresar
-- Animaciones suaves al hacer scroll
+- Slider de testimonios (Swiper)
+- Sección "Sobre Nosotros" con imagen del equipo
+- Formulario de contacto directo a WhatsApp (incluye ciudad y producto)
+- Footer con redes sociales y enlaces
+- Loader animado al iniciar
+- Animaciones y microinteracciones
+- Preparado para expansión a e-commerce
 
 ---
 

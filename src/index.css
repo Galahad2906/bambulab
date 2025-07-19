@@ -5,4 +5,10 @@
 /* ✅ Fix para evitar scroll horizontal en mobile */
 body {
   overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+/* ✅ Scroll suave para navegación por anclas */
+html {
+  scroll-behavior: smooth;
 }

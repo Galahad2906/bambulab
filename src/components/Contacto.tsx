@@ -28,43 +28,62 @@ const Contacto = () => {
 
       <form
         onSubmit={handleSubmit}
+        role="form"
+        aria-label="Formulario de contacto por WhatsApp"
         className="max-w-2xl mx-auto space-y-6 text-left"
       >
+        <label htmlFor="nombre" className="sr-only">Nombre</label>
         <input
+          id="nombre"
           type="text"
           placeholder="Tu nombre"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
+          aria-label="Nombre"
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
+
+        <label htmlFor="ciudad" className="sr-only">Ciudad</label>
         <input
+          id="ciudad"
           type="text"
           placeholder="Tu ciudad"
           value={ciudad}
           onChange={(e) => setCiudad(e.target.value)}
           required
+          aria-label="Ciudad"
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
+
+        <label htmlFor="producto" className="sr-only">Producto de interés</label>
         <input
+          id="producto"
           type="text"
           placeholder="Producto de interés"
           value={producto}
           onChange={(e) => setProducto(e.target.value)}
           required
+          aria-label="Producto de interés"
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
+
+        <label htmlFor="mensaje" className="sr-only">Mensaje</label>
         <textarea
+          id="mensaje"
           placeholder="Tu mensaje"
           value={mensaje}
           onChange={(e) => setMensaje(e.target.value)}
           required
+          aria-label="Mensaje"
           rows={5}
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
+
         <div className="text-center">
           <button
             type="submit"
+            aria-label="Enviar mensaje por WhatsApp"
             className="bg-bambu text-white font-bold py-3 px-6 rounded-full shadow hover:scale-105 transition-transform"
           >
             Enviar por WhatsApp

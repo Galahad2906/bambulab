@@ -20,8 +20,18 @@ const servicios = [
 
 const Servicios = () => {
   return (
-    <section id="servicios" className="bg-gray-100 py-16 px-4 sm:px-6 lg:px-8">
-      <h2 className="text-3xl font-bold text-bambu mb-12 text-center">Servicios</h2>
+    <section
+      id="servicios"
+      role="region"
+      aria-label="Servicios ofrecidos por Bambulab"
+      className="py-20 px-4 sm:px-6 bg-gray-100"
+      data-aos="fade-up"
+    >
+      <div className="max-w-4xl mx-auto text-center mb-10">
+        <h2 className="text-3xl font-bold text-bambu">Nuestros servicios</h2>
+        <p className="mt-2 text-bambu-light">Lo que podemos hacer por vos</p>
+      </div>
+
       <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 justify-center max-w-6xl mx-auto">
         {servicios.map((serv, i) => (
           <div
