@@ -1,29 +1,41 @@
+import { useEffect, useState } from 'react'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from '../firebase'
 import { FaWhatsapp } from 'react-icons/fa'
 
-import alcancias from '../assets/productos/alcancias.jpg'
-import choperas1 from '../assets/productos/choperas1.jpg'
-import choperas2 from '../assets/productos/choperas2.jpg'
-import lentes from '../assets/productos/lentes.jpg'
-import abanicos from '../assets/productos/abanicos.jpg'
-import copas from '../assets/productos/copas.jpg'
-import botella from '../assets/productos/botella.jpg'
-
-const productos = [
-  { nombre: 'Alcancías', imagen: alcancias },
-  { nombre: 'Choperas', imagen: choperas1 },
-  { nombre: 'Choperas', imagen: choperas2 },
-  { nombre: 'Lentes', imagen: lentes },
-  { nombre: 'Abanicos', imagen: abanicos },
-  { nombre: 'Copas', imagen: copas },
-  { nombre: 'Botellas', imagen: botella },
-]
+type Producto = {
+  id: string
+  nombre: string
+  imagen: string
+  precio?: number
+  categoria?: string
+}
 
 const Productos = () => {
+  const [productos, setProductos] = useState<Producto[]>([])
+
+  useEffect(() => {
+    const obtenerProductos = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, 'productos'))
+        const datos = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Producto[]
+        setProductos(datos)
+      } catch (error) {
+        console.error('Error al cargar productos:', error)
+      }
+    }
+
+    obtenerProductos()
+  }, [])
+
   return (
     <section
       id="productos"
       role="region"
-      aria-label="Catálogo de productos personalizados"
+      aria-label="Catálogo de productos"
       className="py-20 px-4 sm:px-6 bg-white text-bambu"
       data-aos="fade-up"
     >
@@ -35,7 +47,7 @@ const Productos = () => {
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center mx-auto max-w-6xl">
         {productos.map((prod, i) => (
           <div
-            key={i}
+            key={prod.id}
             className="relative w-full max-w-xs rounded-lg shadow-md overflow-hidden bg-white group"
             data-aos="fade-up"
             data-aos-delay={i * 100}
@@ -49,6 +61,14 @@ const Productos = () => {
               <h3 className="text-lg font-semibold text-gray-800">
                 {prod.nombre}
               </h3>
+              {prod.precio && (
+                <p className="text-sm text-gray-600 mt-1">
+                  {prod.precio.toLocaleString()} Gs
+                </p>
+              )}
+              {prod.categoria && (
+                <p className="text-xs text-gray-400">{prod.categoria}</p>
+              )}
             </div>
             <a
               href={`https://wa.me/595986271647?text=Hola,%20quiero%20info%20sobre%20${encodeURIComponent(

@@ -1,7 +1,7 @@
-// src/firebase.ts
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth, browserLocalPersistence, setPersistence } from 'firebase/auth'
+import { getStorage } from 'firebase/storage' // ✅ Nuevo import
 
 const firebaseConfig = {
   apiKey: "AIzaSyAjQb4BLoEDm1kMbTev0Ar3jxZwOBIWGQQ",
@@ -25,3 +25,6 @@ setPersistence(auth, browserLocalPersistence)
   .catch((error) => {
     console.error('Error al establecer la persistencia:', error)
   })
+
+// ✅ Nuevo export para Firebase Storage
+export const storage = getStorage(app)

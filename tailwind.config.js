@@ -11,8 +11,8 @@ export default {
       },
       fontFamily: {
         sans: ["Poppins", "sans-serif"],
-        titulo: ["'Fun City Level 2 Stencil'", "sans-serif"]
-      }
+        titulo: ["'Fun City Level 2 Stencil'", "sans-serif"],
+      },
     },
   },
   plugins: [],

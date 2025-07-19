@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import App from './App'
 import Login from './components/Login'
-import AdminPanel from './components/AdminPanel'
+import AdminPanel from './components/admin/AdminPanel'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import './index.css'
