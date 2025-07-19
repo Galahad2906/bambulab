@@ -8,6 +8,7 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  updateDoc,
 } from 'firebase/firestore'
 import { signOut } from 'firebase/auth'
 
@@ -22,6 +23,8 @@ const AdminPanel = () => {
   })
 
   const [productos, setProductos] = useState<any[]>([])
+  const [modoEdicion, setModoEdicion] = useState(false)
+  const [productoEditandoId, setProductoEditandoId] = useState<string | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -37,6 +40,20 @@ const AdminPanel = () => {
     fetchProductos()
   }, [])
 
+  const handleEditar = (producto: any) => {
+    setFormData({
+      nombre: producto.nombre,
+      descripcion: producto.descripcion,
+      imagen: producto.imagen,
+      precio: producto.precio.toString(), // Convertir a string por si es number
+      categoria: producto.categoria,
+      destacado: producto.destacado,
+    })
+    setProductoEditandoId(producto.id)
+    setModoEdicion(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const { nombre, descripcion, imagen, precio, categoria } = formData
@@ -45,7 +62,7 @@ const AdminPanel = () => {
       !nombre.trim() ||
       !descripcion.trim() ||
       !imagen.trim() ||
-      !precio.trim() ||
+      !precio.toString().trim() ||
       !categoria.trim()
     ) {
       alert('Por favor completá todos los campos obligatorios.')
@@ -53,13 +70,22 @@ const AdminPanel = () => {
     }
 
     try {
-      await addDoc(collection(db, 'productos'), {
-        ...formData,
-        precio: parseFloat(precio),
-        timestamp: serverTimestamp(),
-      })
+      if (modoEdicion && productoEditandoId) {
+        await updateDoc(doc(db, 'productos', productoEditandoId), {
+          ...formData,
+          precio: parseFloat(precio),
+        })
+        alert('✅ Producto actualizado correctamente')
+      } else {
+        await addDoc(collection(db, 'productos'), {
+          ...formData,
+          precio: parseFloat(precio),
+          timestamp: serverTimestamp(),
+        })
+        alert('✅ Producto agregado correctamente')
+      }
 
-      alert('✅ Producto agregado correctamente')
+      // Resetear
       setFormData({
         nombre: '',
         descripcion: '',
@@ -68,6 +94,8 @@ const AdminPanel = () => {
         categoria: '',
         destacado: false,
       })
+      setModoEdicion(false)
+      setProductoEditandoId(null)
 
       const querySnapshot = await getDocs(collection(db, 'productos'))
       const productosData = querySnapshot.docs.map((doc) => ({
@@ -76,8 +104,8 @@ const AdminPanel = () => {
       }))
       setProductos(productosData)
     } catch (error) {
-      console.error('Error al agregar producto:', error)
-      alert('❌ Ocurrió un error')
+      console.error('Error al guardar:', error)
+      alert('❌ Ocurrió un error al guardar')
     }
   }
 
@@ -87,6 +115,19 @@ const AdminPanel = () => {
 
     await deleteDoc(doc(db, 'productos', id))
     setProductos(productos.filter((producto) => producto.id !== id))
+  }
+
+  const handleCancelarEdicion = () => {
+    setFormData({
+      nombre: '',
+      descripcion: '',
+      imagen: '',
+      precio: '',
+      categoria: '',
+      destacado: false,
+    })
+    setModoEdicion(false)
+    setProductoEditandoId(null)
   }
 
   const handleLogout = async () => {
@@ -106,9 +147,10 @@ const AdminPanel = () => {
         </button>
       </div>
 
-      {/* 🧼 Formulario sin DaisyUI */}
       <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto mb-10">
-        <h2 className="text-2xl font-bold text-lime-600">Panel de Administración</h2>
+        <h2 className="text-2xl font-bold text-lime-600">
+          {modoEdicion ? '✏️ Editar producto' : '➕ Nuevo producto'}
+        </h2>
 
         <input
           type="text"
@@ -159,12 +201,24 @@ const AdminPanel = () => {
           Destacado
         </label>
 
-        <button
-          type="submit"
-          className="px-4 py-2 bg-lime-600 text-white rounded-md hover:bg-lime-700 font-semibold"
-        >
-          Agregar producto
-        </button>
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-lime-600 text-white rounded-md hover:bg-lime-700 font-semibold"
+          >
+            {modoEdicion ? 'Guardar cambios' : 'Agregar producto'}
+          </button>
+
+          {modoEdicion && (
+            <button
+              type="button"
+              onClick={handleCancelarEdicion}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 font-semibold"
+            >
+              Cancelar
+            </button>
+          )}
+        </div>
       </form>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
@@ -196,7 +250,7 @@ const AdminPanel = () => {
                 ❌
               </button>
               <button
-                onClick={() => alert('Función editar pendiente')}
+                onClick={() => handleEditar(producto)}
                 className="text-blue-500 hover:text-blue-700 text-xl"
                 title="Editar"
               >
