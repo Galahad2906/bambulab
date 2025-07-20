@@ -7,19 +7,20 @@ const ProductForm = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     precio: '',
-    imagen: ''
+    imagen: '',
+    descripcion: ''
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const { nombre, precio, imagen } = formData
+    const { nombre, precio, imagen, descripcion } = formData
 
-    if (!nombre || !precio || !imagen) {
+    if (!nombre || !precio || !imagen || !descripcion) {
       toast.error('⚠️ Completá todos los campos.')
       return
     }
@@ -29,11 +30,12 @@ const ProductForm = () => {
         nombre,
         precio: parseFloat(precio),
         imagen,
+        descripcion,
         creado: serverTimestamp()
       })
 
       toast.success('✅ Producto agregado correctamente')
-      setFormData({ nombre: '', precio: '', imagen: '' })
+      setFormData({ nombre: '', precio: '', imagen: '', descripcion: '' })
     } catch (error) {
       console.error('Error al guardar producto:', error)
       toast.error('❌ Ocurrió un error al guardar')
@@ -72,6 +74,14 @@ const ProductForm = () => {
         value={formData.imagen}
         onChange={handleChange}
         className="w-full border p-2 rounded"
+      />
+
+      <textarea
+        name="descripcion"
+        placeholder="Descripción del producto"
+        value={formData.descripcion}
+        onChange={handleChange}
+        className="w-full border p-2 rounded resize-none"
       />
 
       {formData.imagen && (

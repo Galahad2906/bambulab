@@ -25,6 +25,7 @@ type Producto = {
   precio?: number
   categoria?: string
   destacado?: boolean
+  descripcion?: string
 }
 
 function App() {
@@ -154,6 +155,13 @@ function App() {
                           <h3 className="text-lg font-semibold text-gray-800">
                             {prod.nombre}
                           </h3>
+
+                          {prod.descripcion && (
+                            <p className="text-sm text-gray-700 mt-2">
+                              {prod.descripcion}
+                            </p>
+                          )}
+
                           {prod.precio && (
                             <p className="text-sm text-gray-600 mt-1">
                               {prod.precio.toLocaleString()} Gs
