@@ -1,17 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}', // Detecta clases en todos los archivos fuente
   ],
   theme: {
     extend: {
       colors: {
-        bambu: "#b3cd23",
+        bambu: '#b3cd23', // Verde personalizado de la marca
       },
       fontFamily: {
-        sans: ["Poppins", "sans-serif"],
-        titulo: ["'Fun City Level 2 Stencil'", "sans-serif"],
+        sans: ['Poppins', 'sans-serif'], // Fuente base
+        titulo: ["'Fun City Level 2 Stencil'", 'sans-serif'], // Fuente decorativa opcional
       },
     },
   },

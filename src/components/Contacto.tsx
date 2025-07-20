@@ -1,17 +1,24 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
 const Contacto = () => {
-  const [nombre, setNombre] = useState('');
-  const [ciudad, setCiudad] = useState('');
-  const [producto, setProducto] = useState('');
-  const [mensaje, setMensaje] = useState('');
+  const [nombre, setNombre] = useState('')
+  const [ciudad, setCiudad] = useState('')
+  const [producto, setProducto] = useState('')
+  const [mensaje, setMensaje] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const texto = `Hola, soy ${nombre} de ${ciudad}. Estoy interesado/a en: ${producto}. Quiero consultar lo siguiente: ${mensaje}`;
-    const url = `https://wa.me/595986271647?text=${encodeURIComponent(texto)}`;
-    window.open(url, '_blank');
-  };
+    e.preventDefault()
+
+    if (!nombre || !ciudad || !producto || !mensaje) {
+      alert('Por favor, completá todos los campos.')
+      return
+    }
+
+    const texto = `Hola, soy ${nombre} de ${ciudad}. Estoy interesado/a en: ${producto}. Quiero consultar lo siguiente: ${mensaje}`
+    const url = `https://wa.me/595986271647?text=${encodeURIComponent(texto)}`
+
+    window.open(url, '_blank')
+  }
 
   return (
     <section
@@ -32,7 +39,6 @@ const Contacto = () => {
         aria-label="Formulario de contacto por WhatsApp"
         className="max-w-2xl mx-auto space-y-6 text-left"
       >
-        <label htmlFor="nombre" className="sr-only">Nombre</label>
         <input
           id="nombre"
           type="text"
@@ -44,7 +50,6 @@ const Contacto = () => {
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
 
-        <label htmlFor="ciudad" className="sr-only">Ciudad</label>
         <input
           id="ciudad"
           type="text"
@@ -56,7 +61,6 @@ const Contacto = () => {
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
 
-        <label htmlFor="producto" className="sr-only">Producto de interés</label>
         <input
           id="producto"
           type="text"
@@ -68,7 +72,6 @@ const Contacto = () => {
           className="w-full px-4 py-3 border border-bambu rounded-md focus:outline-none focus:ring-2 focus:ring-bambu/60"
         />
 
-        <label htmlFor="mensaje" className="sr-only">Mensaje</label>
         <textarea
           id="mensaje"
           placeholder="Tu mensaje"
@@ -91,7 +94,7 @@ const Contacto = () => {
         </div>
       </form>
     </section>
-  );
-};
+  )
+}
 
-export default Contacto;
+export default Contacto

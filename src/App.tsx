@@ -1,69 +1,209 @@
+// src/App.tsx
 import { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from './firebase'
+import { FaWhatsapp } from 'react-icons/fa'
+import { toast } from 'react-hot-toast'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
 import Navbar from './components/Navbar'
-import Productos from './components/Productos'
+import Footer from './components/Footer'
 import Servicios from './components/Servicios'
 import Testimonios from './components/Testimonios'
 import SobreNosotros from './components/SobreNosotros'
 import Contacto from './components/Contacto'
-import Footer from './components/Footer'
-import Loader from './components/Loader'
+import Login from './components/admin/Login'
+import AdminPanel from './components/admin/AdminPanel'
+import RutaPrivada from './components/ProtectedRoute'
 
-import 'swiper/css'
-import 'swiper/css/pagination'
+type Producto = {
+  id: string
+  nombre: string
+  imagen: string
+  precio?: number
+  categoria?: string
+  destacado?: boolean
+}
 
 function App() {
-  const [loading, setLoading] = useState(true)
+  const [productos, setProductos] = useState<Producto[]>([])
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todas')
+  const [soloDestacados, setSoloDestacados] = useState(false)
 
   useEffect(() => {
-    AOS.init({ once: true }) // Inicializa AOS: animaciones solo una vez
-    const timer = setTimeout(() => setLoading(false), 2500)
-    return () => clearTimeout(timer)
+    AOS.init({ duration: 800, once: true })
   }, [])
 
-  if (loading) return <Loader />
+  useEffect(() => {
+    const obtenerProductos = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, 'productos'))
+        const datos = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Producto[]
+        setProductos(datos)
+      } catch (error) {
+        console.error('Error al cargar productos:', error)
+        toast.error('Ocurrió un error al cargar productos')
+      }
+    }
+
+    obtenerProductos()
+  }, [])
+
+  const productosFiltrados = productos
+    .filter(p =>
+      categoriaSeleccionada === 'Todas' ? true : p.categoria === categoriaSeleccionada
+    )
+    .filter(p => (soloDestacados ? p.destacado : true))
 
   return (
-    <div className="bg-bambu text-white min-h-screen overflow-x-hidden">
-      <header>
-        <Navbar />
-      </header>
+    <div className="overflow-x-hidden">
+      <Navbar />
 
-      <main>
-        <section
-          id="inicio"
-          role="banner"
-          aria-label="Sección principal con mensaje de bienvenida"
-          className="bg-bambu text-white py-24 px-4 sm:px-6 text-center"
-          data-aos="fade"
-        >
-          <h1 className="text-4xl md:text-5xl font-black leading-tight">
-            Diseñamos artículos únicos<br />para tus momentos inolvidables
-          </h1>
-          <p className="mt-6 text-lg md:text-xl font-light">
-            Personalizados con amor, estilo y creatividad 💚
-          </p>
-          <a
-            href="#productos"
-            aria-label="Ver el catálogo de productos"
-            className="mt-10 inline-block bg-white text-bambu font-bold py-3 px-6 rounded-full shadow-lg hover:scale-105 transition-transform"
-          >
-            Ver catálogo
-          </a>
-        </section>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <section
+                id="productos"
+                role="region"
+                aria-labelledby="titulo-productos"
+                className="py-20 px-4 sm:px-6 bg-white text-bambu"
+                data-aos="fade-up"
+              >
+                <div className="max-w-6xl mx-auto text-center mb-10">
+                  <h2 id="titulo-productos" className="text-3xl font-bold">
+                    Nuestros productos
+                  </h2>
+                  <p className="mt-2 text-gray-700">Diseños únicos hechos a medida</p>
+                </div>
 
-        <Productos />
-        <Servicios />
-        <Testimonios />
-        <SobreNosotros />
-        <Contacto />
-      </main>
+                {/* Filtros */}
+                <div className="flex flex-wrap gap-4 justify-center mb-10">
+                  <select
+                    className="p-2 border border-gray-300 rounded-md"
+                    value={categoriaSeleccionada}
+                    onChange={(e) => {
+                      setCategoriaSeleccionada(e.target.value)
+                      toast.success(`Filtro aplicado: ${e.target.value}`)
+                    }}
+                  >
+                    <option value="Todas">Todas las categorías</option>
+                    {Array.from(new Set(productos.map(p => p.categoria).filter(Boolean))).map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
 
-      <footer>
-        <Footer />
-      </footer>
+                  <label className="flex items-center gap-2 text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={soloDestacados}
+                      onChange={(e) => {
+                        setSoloDestacados(e.target.checked)
+                        toast.success(
+                          e.target.checked
+                            ? 'Mostrando solo destacados'
+                            : 'Mostrando todos los productos'
+                        )
+                      }}
+                      className="w-4 h-4"
+                    />
+                    Solo destacados
+                  </label>
+
+                  {(categoriaSeleccionada !== 'Todas' || soloDestacados) && (
+                    <button
+                      onClick={() => {
+                        setCategoriaSeleccionada('Todas')
+                        setSoloDestacados(false)
+                        toast.success('Filtros restablecidos')
+                      }}
+                      className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-medium transition"
+                    >
+                      Limpiar filtros
+                    </button>
+                  )}
+                </div>
+
+                {/* Productos */}
+                <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center mx-auto max-w-6xl">
+                  {productosFiltrados.length === 0 ? (
+                    <p className="col-span-full text-center text-gray-500">
+                      No hay productos que coincidan con los filtros seleccionados.
+                    </p>
+                  ) : (
+                    productosFiltrados.map((prod, i) => (
+                      <div
+                        key={prod.id}
+                        className="relative w-full max-w-xs rounded-lg shadow-md overflow-hidden bg-white group"
+                        data-aos="fade-up"
+                        data-aos-delay={Math.min(i * 100, 800)}
+                      >
+                        <img
+                          src={prod.imagen}
+                          alt={`Producto: ${prod.nombre}`}
+                          className="h-48 w-full object-cover"
+                          loading="lazy"
+                        />
+                        <div className="p-4">
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            {prod.nombre}
+                          </h3>
+                          {prod.precio && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              {prod.precio.toLocaleString()} Gs
+                            </p>
+                          )}
+                          {prod.categoria && (
+                            <p className="text-xs text-gray-400">{prod.categoria}</p>
+                          )}
+                          {prod.destacado && (
+                            <span className="inline-block mt-2 text-xs text-yellow-700 bg-yellow-200 px-2 py-1 rounded-full">
+                              ⭐ Destacado
+                            </span>
+                          )}
+                        </div>
+                        <a
+                          href={`https://wa.me/595986271647?text=Hola,%20quiero%20info%20sobre%20${encodeURIComponent(prod.nombre)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute bottom-2 right-2 text-green-500 hover:scale-110 transition-transform"
+                          title="Consultar por WhatsApp"
+                        >
+                          <FaWhatsapp size={28} />
+                        </a>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
+
+              <Servicios />
+              <Testimonios />
+              <SobreNosotros />
+              <Contacto />
+            </>
+          }
+        />
+
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/admin"
+          element={
+            <RutaPrivada>
+              <AdminPanel />
+            </RutaPrivada>
+          }
+        />
+      </Routes>
+
+      <Footer />
     </div>
   )
 }

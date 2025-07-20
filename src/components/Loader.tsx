@@ -7,7 +7,7 @@ const Loader = () => {
       aria-label="Cargando el sitio de Bambulab"
     >
       <div className="animate-pulse text-4xl sm:text-5xl font-black tracking-widest drop-shadow-md">
-        BAMBULAB
+        <span aria-hidden="true">BAMBULAB</span>
       </div>
       <span className="sr-only">Cargando Bambulab...</span>
     </div>

@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "jsx": "react-jsx",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "target": "ESNext", // Permite usar las últimas características de JS
+    "useDefineForClassFields": true, // Compatible con la nueva forma de declarar campos
+    "module": "ESNext", // Módulos ES modernos
+    "moduleResolution": "Node", // Resolución de módulos estilo Node.js
+    "strict": true, // Activa el modo estricto de TypeScript (mejor práctica)
+    "jsx": "react-jsx", // Usa el nuevo transformador JSX (React 17+)
+    "esModuleInterop": true, // Importaciones por default desde CommonJS
+    "skipLibCheck": true, // Omite verificación de tipos en libs externas (mejora performance)
+    "forceConsistentCasingInFileNames": true // Evita errores por diferencias de mayúsculas/minúsculas
   },
-  "include": ["src"]
+  "include": ["src"] // Archivos fuente de la app
 }

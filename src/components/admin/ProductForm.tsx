@@ -1,65 +1,94 @@
 import { useState } from 'react'
 import { db } from '../../firebase'
-import { collection, addDoc, Timestamp } from 'firebase/firestore'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { toast } from 'react-hot-toast'
 
 const ProductForm = () => {
-  const [nombre, setNombre] = useState('')
-  const [precio, setPrecio] = useState('')
-  const [imagenUrl, setImagenUrl] = useState('')
+  const [formData, setFormData] = useState({
+    nombre: '',
+    precio: '',
+    imagen: ''
+  })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!nombre || !precio || !imagenUrl) return
+    const { nombre, precio, imagen } = formData
+
+    if (!nombre || !precio || !imagen) {
+      toast.error('⚠️ Completá todos los campos.')
+      return
+    }
 
     try {
       await addDoc(collection(db, 'productos'), {
         nombre,
         precio: parseFloat(precio),
-        imagen: imagenUrl,
-        creado: Timestamp.now()
+        imagen,
+        creado: serverTimestamp()
       })
 
-      // Limpiar campos
-      setNombre('')
-      setPrecio('')
-      setImagenUrl('')
-      alert('✅ Producto agregado correctamente')
+      toast.success('✅ Producto agregado correctamente')
+      setFormData({ nombre: '', precio: '', imagen: '' })
     } catch (error) {
-      console.error('Error al agregar producto:', error)
-      alert('❌ Error al guardar el producto')
+      console.error('Error al guardar producto:', error)
+      toast.error('❌ Ocurrió un error al guardar')
     }
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white shadow-md p-6 rounded-lg mb-8 space-y-4"
+      className="bg-white shadow-md p-6 rounded-lg mb-8 space-y-4 max-w-lg mx-auto"
     >
       <h2 className="text-xl font-bold mb-2 text-bambu">Agregar producto</h2>
+
       <input
         type="text"
-        placeholder="Nombre"
-        value={nombre}
-        onChange={(e) => setNombre(e.target.value)}
+        name="nombre"
+        placeholder="Nombre del producto"
+        value={formData.nombre}
+        onChange={handleChange}
         className="w-full border p-2 rounded"
       />
+
       <input
         type="number"
+        name="precio"
         placeholder="Precio"
-        value={precio}
-        onChange={(e) => setPrecio(e.target.value)}
+        value={formData.precio}
+        onChange={handleChange}
         className="w-full border p-2 rounded"
       />
+
       <input
         type="text"
+        name="imagen"
         placeholder="URL de imagen"
-        value={imagenUrl}
-        onChange={(e) => setImagenUrl(e.target.value)}
+        value={formData.imagen}
+        onChange={handleChange}
         className="w-full border p-2 rounded"
       />
+
+      {formData.imagen && (
+        <img
+          src={formData.imagen}
+          alt="Vista previa"
+          className="w-full h-40 object-cover rounded-md border"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement
+            target.src = 'https://via.placeholder.com/300x200?text=Imagen+inválida'
+          }}
+        />
+      )}
+
       <button
         type="submit"
-        className="bg-bambu text-white font-bold px-4 py-2 rounded hover:bg-bambu/90"
+        className="bg-bambu text-white font-bold px-4 py-2 rounded hover:bg-bambu/90 w-full"
       >
         Guardar producto
       </button>

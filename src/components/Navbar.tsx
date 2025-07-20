@@ -1,5 +1,12 @@
 import logo from '../assets/logo-blanco.png'
 
+const enlaces = [
+  { href: '#inicio', texto: 'Inicio' },
+  { href: '#productos', texto: 'Productos' },
+  { href: '#servicios', texto: 'Servicios' },
+  { href: '#contacto', texto: 'Contacto' }
+]
+
 const Navbar = () => {
   return (
     <nav
@@ -12,19 +19,15 @@ const Navbar = () => {
         <a href="#inicio" aria-label="Ir al inicio">
           <img src={logo} alt="Logo de Bambulab" className="h-10" />
         </a>
+
         <ul className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6 text-white font-semibold text-sm sm:text-base">
-          <li>
-            <a href="#inicio" aria-label="Ir a inicio" className="hover:underline">Inicio</a>
-          </li>
-          <li>
-            <a href="#productos" aria-label="Ir a productos" className="hover:underline">Productos</a>
-          </li>
-          <li>
-            <a href="#servicios" aria-label="Ir a servicios" className="hover:underline">Servicios</a>
-          </li>
-          <li>
-            <a href="#contacto" aria-label="Ir a contacto" className="hover:underline">Contacto</a>
-          </li>
+          {enlaces.map(({ href, texto }) => (
+            <li key={href}>
+              <a href={href} aria-label={`Ir a ${texto.toLowerCase()}`} className="hover:underline">
+                {texto}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
     </nav>

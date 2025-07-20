@@ -1,6 +1,32 @@
+# Node modules y build
 node_modules/
 dist/
-.vscode/
-.env
-.DS_Store
 .vercel/
+
+# Archivos del entorno local
+.env
+.env.*        # Por si usás varios .env (como .env.production)
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store     # macOS
+Thumbs.db     # Windows
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Firebase emuladores y caché (opcional)
+.firebase/
+.firebaserc
+
+# Others
+*.local

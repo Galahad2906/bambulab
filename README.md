@@ -1,12 +1,12 @@
 # 🌿 Bambulab
 
-**Sitio web profesional para Bambulab** – marca paraguaya dedicada a la creación de artículos personalizados, diseño gráfico, afiches con QR y soluciones creativas para marcas y eventos.
+**Sitio web moderno, profesional y accesible para Bambulab** – marca creativa paraguaya especializada en artículos personalizados, diseño gráfico y soluciones visuales para regalos únicos, marcas y eventos.
 
 ---
 
 ## 🧠 ¿Qué es Bambulab?
 
-Bambulab nace con la misión de diseñar artículos únicos y personalizados para momentos inolvidables. Desde Encarnación, trabajamos con amor, estilo y creatividad, ofreciendo desde choperas personalizadas hasta diseño de identidad visual para emprendimientos.
+Bambulab nace en Encarnación con la misión de crear artículos personalizados que inmortalicen momentos especiales. Combinamos creatividad, estilo y tecnología para ofrecer productos como choperas, cuadros QR, regalos corporativos y branding visual para emprendedores.
 
 ---
 
@@ -18,44 +18,64 @@ Bambulab nace con la misión de diseñar artículos únicos y personalizados par
 
 ## 🛠️ Tecnologías utilizadas
 
-- **React + Vite + TypeScript**
-- **Tailwind CSS** – diseño moderno y responsive
-- **React Icons** – iconografía profesional
-- **AOS (Animate On Scroll)** – animaciones suaves al hacer scroll
-- **SwiperJS** – carrusel de testimonios
-- **Vercel** – despliegue continuo desde GitHub
+- ⚛️ **React + Vite + TypeScript** – arquitectura moderna, rápida y escalable
+- 💨 **Tailwind CSS** – diseño responsive y personalización visual eficiente
+- 🧩 **React Icons** – íconos accesibles y consistentes
+- 🎞️ **AOS (Animate On Scroll)** – animaciones suaves y progresivas
+- 🖼️ **SwiperJS** – carrusel profesional para testimonios
+- 🔥 **Firebase** – base de datos, autenticación y almacenamiento
+- 🚀 **Vercel** – deploy automático desde GitHub, rápido y seguro
 
 ---
 
-## ✨ Funcionalidades principales
+## ✨ Funcionalidades destacadas
 
-- Hero institucional con CTA
-- Galería de productos con imágenes reales
-- Botones de WhatsApp personalizados por producto
-- Servicios visuales con íconos representativos
-- Slider de testimonios (Swiper)
-- Sección "Sobre Nosotros" con imagen del equipo
-- Formulario de contacto directo a WhatsApp (incluye ciudad y producto)
-- Footer con redes sociales y enlaces
-- Loader animado al iniciar
-- Animaciones y microinteracciones
-- Preparado para expansión a e-commerce
-
----
-
-## 📱 Responsive
-
-Diseño completamente adaptado a **móviles, tablets y escritorio**.
+- 🌟 **Loader inicial animado** que mejora la experiencia al ingresar
+- 🛍️ **Catálogo visual de productos** con filtros dinámicos por categoría y destacados
+- 🧩 **Botón de WhatsApp por producto**, listo para vender directamente
+- 🧠 **Servicios explicativos** con íconos y diseño intuitivo
+- 🗣️ **Testimonios reales** en carrusel animado
+- 🧑‍🎨 **Sección “Sobre Nosotros”** con imagen representativa del equipo y la marca
+- 💬 **Formulario de contacto inteligente** que inicia conversación por WhatsApp
+- 🔒 **Panel de administrador** con login protegido, para cargar productos sin backend
+- 🎛️ **Filtros inteligentes y control de estado** directamente desde Firebase
+- 📱 Totalmente **responsive**, optimizado para celulares, tablets y escritorio
+- 🔜 Preparado para escalar a e-commerce completo
 
 ---
 
-## 👨‍💻 Autor
+## 🛍️ E-commerce en desarrollo
 
-Desarrollado por **Guillermo Zaracho Zayas**  
-💬 Contacto: [https://wa.me/595972166248](https://wa.me/595972166248)
+El sistema ya incluye un **panel de administración conectado a Firebase**, donde se pueden:
+
+- Agregar, editar y eliminar productos
+- Controlar productos destacados
+- Subir imágenes con almacenamiento en la nube
+
+🧩 Próximas funcionalidades:
+
+- Carrito de compras interactivo  
+- Historial de pedidos en localStorage  
+- Checkout con validación y resumen final  
+- Opción de factura electrónica  
+- Integración futura con backend real y métodos de pago
+
+---
+
+## 🔐 Autenticación
+
+El acceso al panel de administración está protegido mediante **autenticación con Firebase**, con persistencia de sesión local para mejorar la experiencia del administrador.
+
+---
+
+## 👨‍💻 Desarrollador
+
+Creado con ❤️ por **Guillermo Zaracho Zayas**  
+📲 Contacto directo: [https://wa.me/595972166248](https://wa.me/595972166248)
 
 ---
 
 ## 📝 Licencia
 
-Este proyecto es de uso privado para **Bambulab**. Todos los derechos reservados © 2025.
+Este proyecto es de uso exclusivo para **Bambulab**.  
+Todos los derechos reservados © 2025.

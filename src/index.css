@@ -12,3 +12,9 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* 🎯 Mejora opcional: optimizar el renderizado de fuentes */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
