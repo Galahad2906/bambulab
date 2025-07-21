@@ -1,4 +1,3 @@
-// src/components/admin/AdminPanel.tsx
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { db, auth } from '../../firebase'
@@ -10,6 +9,8 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  getDoc,
+  setDoc,
 } from 'firebase/firestore'
 import { signOut } from 'firebase/auth'
 import { toast } from 'react-hot-toast'
@@ -40,6 +41,9 @@ const AdminPanel = () => {
   const [productoEditandoId, setProductoEditandoId] = useState<string | null>(null)
   const [paginaActual, setPaginaActual] = useState(1)
   const productosPorPagina = 6
+
+  const [bannerData, setBannerData] = useState({ mensaje: '', activo: false })
+  const [sobreData, setSobreData] = useState({ texto: '', imagen: '' })
 
   const navigate = useNavigate()
 
@@ -73,6 +77,47 @@ const AdminPanel = () => {
   useEffect(() => {
     fetchProductos()
   }, [])
+
+  useEffect(() => {
+    const obtenerBanner = async () => {
+      const ref = doc(db, 'banner', 'principal')
+      const snap = await getDoc(ref)
+      if (snap.exists()) {
+        setBannerData(snap.data() as { mensaje: string; activo: boolean })
+      }
+    }
+    obtenerBanner()
+  }, [])
+
+  useEffect(() => {
+    const obtenerSobre = async () => {
+      const ref = doc(db, 'config', 'sobre')
+      const snap = await getDoc(ref)
+      if (snap.exists()) {
+        setSobreData(snap.data() as { texto: string; imagen: string })
+      }
+    }
+    obtenerSobre()
+  }, [])
+  const guardarBanner = async () => {
+    try {
+      await setDoc(doc(db, 'banner', 'principal'), bannerData)
+      toastBambu('🎉 Banner actualizado correctamente')
+    } catch (error) {
+      console.error(error)
+      toastBambu('❌ Error al guardar el banner', 'error')
+    }
+  }
+
+  const guardarSobre = async () => {
+    try {
+      await setDoc(doc(db, 'config', 'sobre'), sobreData)
+      toastBambu('✅ Sección "Sobre Bambulab" actualizada')
+    } catch (error) {
+      console.error(error)
+      toastBambu('❌ Error al guardar sección sobre', 'error')
+    }
+  }
 
   const handleEditar = (producto: Producto) => {
     setFormData({
@@ -138,7 +183,7 @@ const AdminPanel = () => {
   }
 
   const handleEliminar = async (id: string) => {
-    const confirm = window.confirm('¿Estás seguro de que querés eliminar este producto?')
+    const confirm = window.confirm('¿Eliminar este producto?')
     if (!confirm) return
 
     await deleteDoc(doc(db, 'productos', id))
@@ -150,7 +195,6 @@ const AdminPanel = () => {
     await signOut(auth)
     navigate('/login')
   }
-
   return (
     <section className="min-h-screen bg-white text-bambu p-8">
       <div className="flex justify-between items-center mb-8">
@@ -163,6 +207,67 @@ const AdminPanel = () => {
         </button>
       </div>
 
+      {/* 🔧 Banner */}
+      <section className="bg-gray-50 p-6 rounded-lg shadow mb-8 max-w-xl mx-auto border">
+        <h3 className="text-xl font-bold text-bambu mb-4">📢 Banner superior</h3>
+        <textarea
+          className="w-full border p-2 rounded mb-2"
+          placeholder="Mensaje del banner"
+          value={bannerData.mensaje}
+          onChange={(e) => setBannerData({ ...bannerData, mensaje: e.target.value })}
+        />
+        <label className="flex items-center gap-2 text-bambu font-medium mb-4">
+          <input
+            type="checkbox"
+            checked={bannerData.activo}
+            onChange={(e) =>
+              setBannerData({ ...bannerData, activo: e.target.checked })
+            }
+            className="w-4 h-4"
+          />
+          Mostrar banner
+        </label>
+        <button
+          onClick={guardarBanner}
+          className="bg-bambu text-white px-4 py-2 rounded hover:bg-bambu/90 font-bold w-full"
+        >
+          Guardar cambios
+        </button>
+      </section>
+
+      {/* 📝 Sobre Bambulab */}
+      <section className="bg-gray-50 p-6 rounded-lg shadow mb-8 max-w-xl mx-auto border">
+        <h3 className="text-xl font-bold text-bambu mb-4">📝 Editar sección "Sobre Bambulab"</h3>
+        <textarea
+          className="w-full border p-2 rounded mb-2"
+          placeholder="Texto descriptivo"
+          value={sobreData.texto}
+          onChange={(e) => setSobreData({ ...sobreData, texto: e.target.value })}
+          rows={5}
+        />
+        <input
+          type="text"
+          className="w-full border p-2 rounded mb-2"
+          placeholder="URL de imagen"
+          value={sobreData.imagen}
+          onChange={(e) => setSobreData({ ...sobreData, imagen: e.target.value })}
+        />
+        {sobreData.imagen && (
+          <img
+            src={sobreData.imagen}
+            alt="Vista previa"
+            className="w-full h-40 object-cover rounded-md border mb-2"
+          />
+        )}
+        <button
+          onClick={guardarSobre}
+          className="bg-bambu text-white px-4 py-2 rounded hover:bg-bambu/90 font-bold w-full"
+        >
+          Guardar sección
+        </button>
+      </section>
+
+      {/* 📦 Formulario de productos */}
       <motion.form
         onSubmit={handleSubmit}
         className="space-y-4 max-w-md mx-auto mb-10"
@@ -201,7 +306,7 @@ const AdminPanel = () => {
           <img
             src={formData.imagen}
             alt="Vista previa"
-            className="w-full h-40 object-cover rounded-md border mt-2"
+            className="w-full h-40 object-cover rounded-md border"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 'https://via.placeholder.com/300x200?text=Imagen+no+válida'
@@ -257,6 +362,7 @@ const AdminPanel = () => {
         </div>
       </motion.form>
 
+      {/* 📋 Listado de productos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
         {productosVisibles.map((producto) => (
           <motion.div
@@ -302,6 +408,7 @@ const AdminPanel = () => {
         ))}
       </div>
 
+      {/* 📄 Paginación */}
       <div className="flex justify-center mt-8 gap-2 flex-wrap items-center">
         {paginaActual > 1 && (
           <button
@@ -311,7 +418,6 @@ const AdminPanel = () => {
             ← Anterior
           </button>
         )}
-
         {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((pagina) => (
           <button
             key={pagina}
@@ -325,7 +431,6 @@ const AdminPanel = () => {
             {pagina}
           </button>
         ))}
-
         {paginaActual < totalPaginas && (
           <button
             onClick={() => setPaginaActual(paginaActual + 1)}

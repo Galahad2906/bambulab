@@ -1,7 +1,6 @@
-// src/App.tsx
 import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore'
 import { db } from './firebase'
 import { FaWhatsapp } from 'react-icons/fa'
 import { toast } from 'react-hot-toast'
@@ -17,6 +16,7 @@ import Contacto from './components/Contacto'
 import Login from './components/admin/Login'
 import AdminPanel from './components/admin/AdminPanel'
 import RutaPrivada from './components/ProtectedRoute'
+import Loader from './components/Loader' // Asegurate de tener este componente
 
 type Producto = {
   id: string
@@ -32,27 +32,39 @@ function App() {
   const [productos, setProductos] = useState<Producto[]>([])
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todas')
   const [soloDestacados, setSoloDestacados] = useState(false)
+  const [banner, setBanner] = useState<{ mensaje: string; activo: boolean } | null>(null)
+  const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true })
   }, [])
 
   useEffect(() => {
-    const obtenerProductos = async () => {
+    const fetchTodo = async () => {
       try {
-        const snapshot = await getDocs(collection(db, 'productos'))
-        const datos = snapshot.docs.map(doc => ({
+        const [productosSnap, bannerSnap] = await Promise.all([
+          getDocs(collection(db, 'productos')),
+          getDoc(doc(db, 'banner', 'principal')),
+        ])
+
+        const productosData = productosSnap.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         })) as Producto[]
-        setProductos(datos)
+        setProductos(productosData)
+
+        if (bannerSnap.exists()) {
+          setBanner(bannerSnap.data() as { mensaje: string; activo: boolean })
+        }
       } catch (error) {
-        console.error('Error al cargar productos:', error)
-        toast.error('Ocurrió un error al cargar productos')
+        toast.error('Ocurrió un error al cargar datos')
+        console.error(error)
+      } finally {
+        setCargando(false)
       }
     }
 
-    obtenerProductos()
+    fetchTodo()
   }, [])
 
   const productosFiltrados = productos
@@ -61,8 +73,18 @@ function App() {
     )
     .filter(p => (soloDestacados ? p.destacado : true))
 
+  if (cargando) {
+    return <Loader />
+  }
+
   return (
     <div className="overflow-x-hidden">
+      {banner?.activo && (
+        <div className="bg-yellow-100 text-yellow-800 text-center py-2 font-medium shadow">
+          {banner.mensaje}
+        </div>
+      )}
+
       <Navbar />
 
       <Routes>
@@ -84,7 +106,6 @@ function App() {
                   <p className="mt-2 text-gray-700">Diseños únicos hechos a medida</p>
                 </div>
 
-                {/* Filtros */}
                 <div className="flex flex-wrap gap-4 justify-center mb-10">
                   <select
                     className="p-2 border border-gray-300 rounded-md"
@@ -131,7 +152,6 @@ function App() {
                   )}
                 </div>
 
-                {/* Productos */}
                 <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center mx-auto max-w-6xl">
                   {productosFiltrados.length === 0 ? (
                     <p className="col-span-full text-center text-gray-500">
@@ -200,7 +220,6 @@ function App() {
         />
 
         <Route path="/login" element={<Login />} />
-
         <Route
           path="/admin"
           element={

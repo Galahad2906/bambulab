@@ -1,32 +1,47 @@
-import sobreImg from '../assets/sobre-nosotros.png'
+import { useEffect, useState } from 'react'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../firebase'
 
 const SobreNosotros = () => {
+  const [info, setInfo] = useState<{ texto: string; imagen: string } | null>(null)
+
+  useEffect(() => {
+    const fetchSobre = async () => {
+      try {
+        const ref = doc(db, 'config', 'sobre')
+        const snap = await getDoc(ref)
+        if (snap.exists()) {
+          setInfo(snap.data() as { texto: string; imagen: string })
+        }
+      } catch (error) {
+        console.error('Error al cargar sección Sobre Nosotros:', error)
+      }
+    }
+
+    fetchSobre()
+  }, [])
+
   return (
     <section
       id="sobre"
       role="region"
       aria-labelledby="titulo-sobre"
-      className="bg-white py-16 px-4 sm:px-6 lg:px-8"
+      className="py-20 px-4 sm:px-6 bg-white text-bambu"
+      data-aos="fade-up"
     >
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-        <figure data-aos="fade-right">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        {info?.imagen && (
           <img
-            src={sobreImg}
-            alt="Taller artesanal de Bambulab en Encarnación"
-            className="w-full max-w-md mx-auto md:mx-0 rounded-lg shadow-lg"
+            src={info.imagen}
+            alt="Sobre Bambulab"
+            className="w-full rounded-lg shadow"
           />
-        </figure>
-
-        <div className="text-center md:text-left md:order-last" data-aos="fade-left">
-          <h2 id="titulo-sobre" className="text-3xl font-bold text-bambu mb-4">
+        )}
+        <div>
+          <h2 id="titulo-sobre" className="text-3xl font-bold mb-4 text-bambu">
             Sobre Bambulab
           </h2>
-          <p className="text-gray-700 leading-relaxed">
-            En Bambulab nos apasiona crear artículos únicos y personalizados para que tus momentos sean inolvidables. 🎁✨
-          </p>
-          <p className="text-gray-700 mt-4 leading-relaxed">
-            Desde Encarnación, trabajamos con dedicación en cada detalle y enviamos a todo Paraguay. ¡Gracias por confiar en nosotros!
-          </p>
+          <p className="text-gray-700 whitespace-pre-line">{info?.texto}</p>
         </div>
       </div>
     </section>
