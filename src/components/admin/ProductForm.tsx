@@ -1,87 +1,61 @@
-import { useState } from 'react'
-import { db } from '../../firebase'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { toast } from 'react-hot-toast'
+import { Producto } from '../../types'
+import { motion } from 'framer-motion'
 
-const ProductForm = () => {
-  const [formData, setFormData] = useState({
-    nombre: '',
-    precio: '',
-    imagen: '',
-    descripcion: ''
-  })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+type Props = {
+  formData: {
+    nombre: string
+    descripcion: string
+    imagen: string
+    precio: string
+    categoria: string
+    destacado: boolean
   }
+  setFormData: React.Dispatch<React.SetStateAction<any>>
+  modoEdicion: boolean
+  resetForm: () => void
+  handleSubmit: (e: React.FormEvent) => void
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const { nombre, precio, imagen, descripcion } = formData
-
-    if (!nombre || !precio || !imagen || !descripcion) {
-      toast.error('⚠️ Completá todos los campos.')
-      return
-    }
-
-    try {
-      await addDoc(collection(db, 'productos'), {
-        nombre,
-        precio: parseFloat(precio),
-        imagen,
-        descripcion,
-        creado: serverTimestamp()
-      })
-
-      toast.success('✅ Producto agregado correctamente')
-      setFormData({ nombre: '', precio: '', imagen: '', descripcion: '' })
-    } catch (error) {
-      console.error('Error al guardar producto:', error)
-      toast.error('❌ Ocurrió un error al guardar')
-    }
-  }
-
+const ProductForm = ({
+  formData,
+  setFormData,
+  modoEdicion,
+  resetForm,
+  handleSubmit
+}: Props) => {
   return (
-    <form
+    <motion.form
       onSubmit={handleSubmit}
-      className="bg-white shadow-md p-6 rounded-lg mb-8 space-y-4 max-w-lg mx-auto"
+      className="space-y-4 max-w-md mx-auto mb-10"
+      initial={{ opacity: 0, y: -30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <h2 className="text-xl font-bold mb-2 text-bambu">Agregar producto</h2>
+      <h2 className="text-2xl font-bold text-lime-600">
+        {modoEdicion ? '✏️ Editar producto' : '➕ Nuevo producto'}
+      </h2>
 
       <input
         type="text"
-        name="nombre"
         placeholder="Nombre del producto"
+        className="w-full p-2 border rounded-md"
         value={formData.nombre}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-      />
-
-      <input
-        type="number"
-        name="precio"
-        placeholder="Precio"
-        value={formData.precio}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-      />
-
-      <input
-        type="text"
-        name="imagen"
-        placeholder="URL de imagen"
-        value={formData.imagen}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
+        onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
       />
 
       <textarea
-        name="descripcion"
-        placeholder="Descripción del producto"
+        placeholder="Descripción"
+        className="w-full p-2 border rounded-md"
         value={formData.descripcion}
-        onChange={handleChange}
-        className="w-full border p-2 rounded resize-none"
+        onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+      />
+
+      <input
+        type="text"
+        placeholder="URL de la imagen"
+        className="w-full p-2 border rounded-md"
+        value={formData.imagen}
+        onChange={(e) => setFormData({ ...formData, imagen: e.target.value })}
       />
 
       {formData.imagen && (
@@ -90,19 +64,59 @@ const ProductForm = () => {
           alt="Vista previa"
           className="w-full h-40 object-cover rounded-md border"
           onError={(e) => {
-            const target = e.target as HTMLImageElement
-            target.src = 'https://via.placeholder.com/300x200?text=Imagen+inválida'
+            (e.target as HTMLImageElement).src =
+              'https://via.placeholder.com/300x200?text=Imagen+no+válida'
           }}
         />
       )}
 
-      <button
-        type="submit"
-        className="bg-bambu text-white font-bold px-4 py-2 rounded hover:bg-bambu/90 w-full"
-      >
-        Guardar producto
-      </button>
-    </form>
+      <input
+        type="number"
+        placeholder="Precio"
+        className="w-full p-2 border rounded-md"
+        value={formData.precio}
+        onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
+      />
+
+      <input
+        type="text"
+        placeholder="Categoría"
+        className="w-full p-2 border rounded-md"
+        value={formData.categoria}
+        onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+      />
+
+      <label className="flex items-center gap-2 text-lime-700">
+        <input
+          type="checkbox"
+          checked={formData.destacado}
+          onChange={(e) =>
+            setFormData({ ...formData, destacado: e.target.checked })
+          }
+          className="w-4 h-4"
+        />
+        Destacado
+      </label>
+
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          className="px-4 py-2 bg-lime-600 text-white rounded-md hover:bg-lime-700 font-semibold"
+        >
+          {modoEdicion ? 'Guardar cambios' : 'Agregar producto'}
+        </button>
+
+        {modoEdicion && (
+          <button
+            type="button"
+            onClick={resetForm}
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 font-semibold"
+          >
+            Cancelar
+          </button>
+        )}
+      </div>
+    </motion.form>
   )
 }
 

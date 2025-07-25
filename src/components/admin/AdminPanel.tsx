@@ -14,19 +14,18 @@ import {
 } from 'firebase/firestore'
 import { signOut } from 'firebase/auth'
 import { toast } from 'react-hot-toast'
-import { motion } from 'framer-motion'
 
-type Producto = {
-  id: string
-  nombre: string
-  descripcion: string
-  imagen: string
-  precio: number
-  categoria: string
-  destacado: boolean
-}
+import { Producto, Testimonio, BannerData, SobreData } from 'types' // ✅
+import BannerManager from './BannerManager'
+import SobreEditor from './SobreEditor'
+import TestimoniosManager from './TestimoniosManager'
+import ProductForm from './ProductForm'
+import ProductList from './ProductList'
 
 const AdminPanel = () => {
+  const navigate = useNavigate()
+
+  // 🛍 Productos
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -35,22 +34,34 @@ const AdminPanel = () => {
     categoria: '',
     destacado: false,
   })
-
   const [productos, setProductos] = useState<Producto[]>([])
   const [modoEdicion, setModoEdicion] = useState(false)
   const [productoEditandoId, setProductoEditandoId] = useState<string | null>(null)
   const [paginaActual, setPaginaActual] = useState(1)
   const productosPorPagina = 6
 
-  const [bannerData, setBannerData] = useState({ mensaje: '', activo: false })
-  const [sobreData, setSobreData] = useState({ texto: '', imagen: '' })
+  // 💬 Testimonios
+  const [testimonios, setTestimonios] = useState<Testimonio[]>([])
+  const [testimonioForm, setTestimonioForm] = useState<Testimonio>({
+    nombre: '',
+    mensaje: '',
+    avatar: ''
+  })
+  const [modoEdicionTestimonio, setModoEdicionTestimonio] = useState(false)
+  const [idEditandoTestimonio, setIdEditandoTestimonio] = useState<string | null>(null)
 
-  const navigate = useNavigate()
+  // 🖼️ Banner
+  const [bannerData, setBannerData] = useState<BannerData & { enlace?: string }>({
+    imagen: '',
+    enlace: '',
+    activo: false
+  })
 
-  const totalPaginas = Math.ceil(productos.length / productosPorPagina)
-  const indexUltimo = paginaActual * productosPorPagina
-  const indexPrimero = indexUltimo - productosPorPagina
-  const productosVisibles = productos.slice(indexPrimero, indexUltimo)
+  // 🧾 Sobre nosotros
+  const [sobreData, setSobreData] = useState<SobreData>({
+    texto: '',
+    imagen: ''
+  })
 
   const toastBambu = (mensaje: string, tipo: 'success' | 'error' = 'success') =>
     toast[tipo](mensaje, {
@@ -65,40 +76,53 @@ const AdminPanel = () => {
       duration: 3000,
     })
 
+  // 🔃 Fetch inicial
+  useEffect(() => {
+    fetchProductos()
+    fetchTestimonios()
+    obtenerBanner()
+    obtenerSobre()
+  }, [])
+
   const fetchProductos = async () => {
     const snapshot = await getDocs(collection(db, 'productos'))
-    const datos = snapshot.docs.map((doc) => ({
+    const datos = snapshot.docs.map(doc => ({
       id: doc.id,
       ...(doc.data() as Omit<Producto, 'id'>),
     }))
     setProductos(datos)
   }
 
-  useEffect(() => {
-    fetchProductos()
-  }, [])
+  const fetchTestimonios = async () => {
+    const snap = await getDocs(collection(db, 'testimonios'))
+    const datos = snap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Testimonio[]
+    setTestimonios(datos)
+  }
 
-  useEffect(() => {
-    const obtenerBanner = async () => {
+  const obtenerBanner = async () => {
+    try {
       const ref = doc(db, 'banner', 'principal')
       const snap = await getDoc(ref)
       if (snap.exists()) {
-        setBannerData(snap.data() as { mensaje: string; activo: boolean })
+        setBannerData(snap.data() as BannerData & { enlace?: string })
       }
+    } catch (error) {
+      console.error('Error al cargar banner:', error)
     }
-    obtenerBanner()
-  }, [])
+  }
 
-  useEffect(() => {
-    const obtenerSobre = async () => {
-      const ref = doc(db, 'config', 'sobre')
-      const snap = await getDoc(ref)
-      if (snap.exists()) {
-        setSobreData(snap.data() as { texto: string; imagen: string })
-      }
+  const obtenerSobre = async () => {
+    const ref = doc(db, 'config', 'sobre')
+    const snap = await getDoc(ref)
+    if (snap.exists()) {
+      setSobreData(snap.data() as SobreData)
     }
-    obtenerSobre()
-  }, [])
+  }
+
+  // 📝 Guardar funciones
   const guardarBanner = async () => {
     try {
       await setDoc(doc(db, 'banner', 'principal'), bannerData)
@@ -116,6 +140,43 @@ const AdminPanel = () => {
     } catch (error) {
       console.error(error)
       toastBambu('❌ Error al guardar sección sobre', 'error')
+    }
+  }
+
+  const guardarTestimonio = async () => {
+    const { nombre, mensaje, avatar } = testimonioForm
+    if (!nombre || !mensaje || !avatar) {
+      toastBambu('⚠️ Completá todos los campos de testimonio.', 'error')
+      return
+    }
+
+    try {
+      if (modoEdicionTestimonio && idEditandoTestimonio) {
+        await updateDoc(doc(db, 'testimonios', idEditandoTestimonio), {
+          nombre, mensaje, avatar
+        })
+        toastBambu('✅ Testimonio actualizado')
+      } else {
+        await addDoc(collection(db, 'testimonios'), {
+          nombre, mensaje, avatar
+        })
+        toastBambu('✅ Testimonio agregado')
+      }
+      setTestimonioForm({ nombre: '', mensaje: '', avatar: '' })
+      setModoEdicionTestimonio(false)
+      setIdEditandoTestimonio(null)
+      await fetchTestimonios()
+    } catch (error) {
+      console.error(error)
+      toastBambu('❌ Error al guardar testimonio', 'error')
+    }
+  }
+
+  const eliminarTestimonio = async (id: string) => {
+    if (confirm('¿Eliminar este testimonio?')) {
+      await deleteDoc(doc(db, 'testimonios', id))
+      toastBambu('🗑️ Testimonio eliminado')
+      await fetchTestimonios()
     }
   }
 
@@ -195,6 +256,7 @@ const AdminPanel = () => {
     await signOut(auth)
     navigate('/login')
   }
+
   return (
     <section className="min-h-screen bg-white text-bambu p-8">
       <div className="flex justify-between items-center mb-8">
@@ -207,239 +269,47 @@ const AdminPanel = () => {
         </button>
       </div>
 
-      {/* 🔧 Banner */}
-      <section className="bg-gray-50 p-6 rounded-lg shadow mb-8 max-w-xl mx-auto border">
-        <h3 className="text-xl font-bold text-bambu mb-4">📢 Banner superior</h3>
-        <textarea
-          className="w-full border p-2 rounded mb-2"
-          placeholder="Mensaje del banner"
-          value={bannerData.mensaje}
-          onChange={(e) => setBannerData({ ...bannerData, mensaje: e.target.value })}
-        />
-        <label className="flex items-center gap-2 text-bambu font-medium mb-4">
-          <input
-            type="checkbox"
-            checked={bannerData.activo}
-            onChange={(e) =>
-              setBannerData({ ...bannerData, activo: e.target.checked })
-            }
-            className="w-4 h-4"
-          />
-          Mostrar banner
-        </label>
-        <button
-          onClick={guardarBanner}
-          className="bg-bambu text-white px-4 py-2 rounded hover:bg-bambu/90 font-bold w-full"
-        >
-          Guardar cambios
-        </button>
-      </section>
+      {/* 🔧 Subcomponentes */}
+      <BannerManager
+        bannerData={bannerData}
+        setBannerData={setBannerData}
+        guardarBanner={guardarBanner}
+      />
 
-      {/* 📝 Sobre Bambulab */}
-      <section className="bg-gray-50 p-6 rounded-lg shadow mb-8 max-w-xl mx-auto border">
-        <h3 className="text-xl font-bold text-bambu mb-4">📝 Editar sección "Sobre Bambulab"</h3>
-        <textarea
-          className="w-full border p-2 rounded mb-2"
-          placeholder="Texto descriptivo"
-          value={sobreData.texto}
-          onChange={(e) => setSobreData({ ...sobreData, texto: e.target.value })}
-          rows={5}
-        />
-        <input
-          type="text"
-          className="w-full border p-2 rounded mb-2"
-          placeholder="URL de imagen"
-          value={sobreData.imagen}
-          onChange={(e) => setSobreData({ ...sobreData, imagen: e.target.value })}
-        />
-        {sobreData.imagen && (
-          <img
-            src={sobreData.imagen}
-            alt="Vista previa"
-            className="w-full h-40 object-cover rounded-md border mb-2"
-          />
-        )}
-        <button
-          onClick={guardarSobre}
-          className="bg-bambu text-white px-4 py-2 rounded hover:bg-bambu/90 font-bold w-full"
-        >
-          Guardar sección
-        </button>
-      </section>
+      <SobreEditor
+        sobreData={sobreData}
+        setSobreData={setSobreData}
+        guardarSobre={guardarSobre}
+      />
 
-      {/* 📦 Formulario de productos */}
-      <motion.form
-        onSubmit={handleSubmit}
-        className="space-y-4 max-w-md mx-auto mb-10"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="text-2xl font-bold text-lime-600">
-          {modoEdicion ? '✏️ Editar producto' : '➕ Nuevo producto'}
-        </h2>
+      <TestimoniosManager
+        testimonios={testimonios}
+        testimonioForm={testimonioForm}
+        setTestimonioForm={setTestimonioForm}
+        modoEdicion={modoEdicionTestimonio}
+        setModoEdicion={setModoEdicionTestimonio}
+        idEditando={idEditandoTestimonio}
+        setIdEditando={setIdEditandoTestimonio}
+        guardarTestimonio={guardarTestimonio}
+        eliminarTestimonio={eliminarTestimonio}
+      />
 
-        <input
-          type="text"
-          placeholder="Nombre del producto"
-          className="w-full p-2 border rounded-md"
-          value={formData.nombre}
-          onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-        />
+      <ProductForm
+        formData={formData}
+        setFormData={setFormData}
+        modoEdicion={modoEdicion}
+        resetForm={resetForm}
+        handleSubmit={handleSubmit}
+      />
 
-        <textarea
-          placeholder="Descripción"
-          className="w-full p-2 border rounded-md"
-          value={formData.descripcion}
-          onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-        />
-
-        <input
-          type="text"
-          placeholder="URL de la imagen"
-          className="w-full p-2 border rounded-md"
-          value={formData.imagen}
-          onChange={(e) => setFormData({ ...formData, imagen: e.target.value })}
-        />
-
-        {formData.imagen && (
-          <img
-            src={formData.imagen}
-            alt="Vista previa"
-            className="w-full h-40 object-cover rounded-md border"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                'https://via.placeholder.com/300x200?text=Imagen+no+válida'
-            }}
-          />
-        )}
-
-        <input
-          type="number"
-          placeholder="Precio"
-          className="w-full p-2 border rounded-md"
-          value={formData.precio}
-          onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
-        />
-
-        <input
-          type="text"
-          placeholder="Categoría"
-          className="w-full p-2 border rounded-md"
-          value={formData.categoria}
-          onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-        />
-
-        <label className="flex items-center gap-2 text-lime-700">
-          <input
-            type="checkbox"
-            checked={formData.destacado}
-            onChange={(e) =>
-              setFormData({ ...formData, destacado: e.target.checked })
-            }
-            className="w-4 h-4"
-          />
-          Destacado
-        </label>
-
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-lime-600 text-white rounded-md hover:bg-lime-700 font-semibold"
-          >
-            {modoEdicion ? 'Guardar cambios' : 'Agregar producto'}
-          </button>
-
-          {modoEdicion && (
-            <button
-              type="button"
-              onClick={resetForm}
-              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 font-semibold"
-            >
-              Cancelar
-            </button>
-          )}
-        </div>
-      </motion.form>
-
-      {/* 📋 Listado de productos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-        {productosVisibles.map((producto) => (
-          <motion.div
-            key={producto.id}
-            className="bg-white shadow-md rounded-xl p-4 relative border"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            <img
-              src={producto.imagen}
-              alt={producto.nombre}
-              className="w-full h-40 object-cover rounded-lg mb-4"
-            />
-            <h2 className="text-lg font-semibold">{producto.nombre}</h2>
-            <p className="text-sm text-gray-600">{producto.descripcion}</p>
-            <p className="text-sm text-gray-800 mt-1">💲 {producto.precio}</p>
-            <p className="text-sm text-gray-500">📦 {producto.categoria}</p>
-            {producto.destacado && (
-              <span className="inline-block mt-2 text-xs text-yellow-700 bg-yellow-200 px-2 py-1 rounded-full">
-                ⭐ Destacado
-              </span>
-            )}
-            <div className="absolute top-2 right-2 flex gap-2">
-              <button
-                onClick={() => handleEliminar(producto.id)}
-                className="text-red-500 hover:text-red-700 text-xl"
-                title="Eliminar"
-              >
-                ❌
-              </button>
-              <motion.button
-                onClick={() => handleEditar(producto)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="text-blue-500 hover:text-blue-700 text-xl"
-                title="Editar"
-              >
-                ✏️
-              </motion.button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* 📄 Paginación */}
-      <div className="flex justify-center mt-8 gap-2 flex-wrap items-center">
-        {paginaActual > 1 && (
-          <button
-            onClick={() => setPaginaActual(paginaActual - 1)}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-          >
-            ← Anterior
-          </button>
-        )}
-        {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((pagina) => (
-          <button
-            key={pagina}
-            onClick={() => setPaginaActual(pagina)}
-            className={`px-3 py-1 rounded ${
-              pagina === paginaActual
-                ? 'bg-lime-600 text-white font-bold'
-                : 'bg-gray-200 hover:bg-gray-300'
-            }`}
-          >
-            {pagina}
-          </button>
-        ))}
-        {paginaActual < totalPaginas && (
-          <button
-            onClick={() => setPaginaActual(paginaActual + 1)}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-          >
-            Siguiente →
-          </button>
-        )}
-      </div>
+      <ProductList
+        productos={productos}
+        paginaActual={paginaActual}
+        setPaginaActual={setPaginaActual}
+        productosPorPagina={productosPorPagina}
+        handleEliminar={handleEliminar}
+        handleEditar={handleEditar}
+      />
     </section>
   )
 }

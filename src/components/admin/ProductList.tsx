@@ -1,88 +1,109 @@
-import { useEffect, useState } from 'react'
-import { db } from '../../firebase'
-import { collection, getDocs } from 'firebase/firestore'
+import { Producto } from '../../types'
 import { motion } from 'framer-motion'
 
-type Producto = {
-  id: string
-  nombre: string
-  descripcion: string
-  imagen: string
-  precio: number
-  categoria: string
-  destacado: boolean
+type Props = {
+  productos: Producto[]
+  paginaActual: number
+  setPaginaActual: React.Dispatch<React.SetStateAction<number>>
+  productosPorPagina: number
+  handleEliminar: (id: string) => void
+  handleEditar: (producto: Producto) => void
 }
 
-const ProductList = () => {
-  const [productos, setProductos] = useState<Producto[]>([])
-
-  useEffect(() => {
-    const fetchProductos = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'productos'))
-        const items = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Producto[]
-        setProductos(items)
-      } catch (error) {
-        console.error('Error al obtener productos:', error)
-      }
-    }
-
-    fetchProductos()
-  }, [])
+const ProductList = ({
+  productos,
+  paginaActual,
+  setPaginaActual,
+  productosPorPagina,
+  handleEliminar,
+  handleEditar
+}: Props) => {
+  const totalPaginas = Math.ceil(productos.length / productosPorPagina)
+  const indexUltimo = paginaActual * productosPorPagina
+  const indexPrimero = indexUltimo - productosPorPagina
+  const productosVisibles = productos.slice(indexPrimero, indexUltimo)
 
   return (
-    <section className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-bambu">📋 Productos cargados</h2>
+    <>
+      {/* 📋 Listado de productos */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+        {productosVisibles.map((producto) => (
+          <motion.div
+            key={producto.id}
+            className="bg-white shadow-md rounded-xl p-4 relative border"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <img
+              src={producto.imagen}
+              alt={producto.nombre}
+              className="w-full h-40 object-cover rounded-lg mb-4"
+            />
+            <h2 className="text-lg font-semibold">{producto.nombre}</h2>
+            <p className="text-sm text-gray-600">{producto.descripcion}</p>
+            <p className="text-sm text-gray-800 mt-1">💲 {producto.precio}</p>
+            <p className="text-sm text-gray-500">📦 {producto.categoria}</p>
+            {producto.destacado && (
+              <span className="inline-block mt-2 text-xs text-yellow-700 bg-yellow-200 px-2 py-1 rounded-full">
+                ⭐ Destacado
+              </span>
+            )}
+            <div className="absolute top-2 right-2 flex gap-2">
+              <button
+                onClick={() => handleEliminar(producto.id)}
+                className="text-red-500 hover:text-red-700 text-xl"
+                title="Eliminar"
+              >
+                ❌
+              </button>
+              <motion.button
+                onClick={() => handleEditar(producto)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="text-blue-500 hover:text-blue-700 text-xl"
+                title="Editar"
+              >
+                ✏️
+              </motion.button>
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
-      {productos.length === 0 ? (
-        <p className="text-gray-600">No hay productos registrados aún.</p>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {productos.map((producto) => (
-            <motion.div
-              key={producto.id}
-              className="bg-white rounded-xl shadow-md p-4 relative border hover:shadow-lg transition-all"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {producto.destacado && (
-                <span className="absolute top-2 right-2 bg-yellow-400 text-white text-xs font-bold px-2 py-1 rounded-full shadow">
-                  ⭐ Destacado
-                </span>
-              )}
-
-              <img
-                src={producto.imagen}
-                alt={producto.nombre}
-                className="w-full h-40 object-cover rounded mb-3"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement
-                  target.src = 'https://via.placeholder.com/300x200?text=Imagen+no+disponible'
-                }}
-              />
-
-              <h3 className="text-lg font-semibold text-gray-800">{producto.nombre}</h3>
-
-              <p className="text-gray-600 text-sm">
-                {producto.descripcion || 'Sin descripción disponible.'}
-              </p>
-
-              <p className="text-gray-500 text-xs mt-1">
-                Categoría: <span className="font-medium">{producto.categoria || 'Sin categoría'}</span>
-              </p>
-
-              <p className="font-bold text-bambu mt-2 text-right">
-                Gs. {producto.precio.toLocaleString()}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      )}
-    </section>
+      {/* 📄 Paginación */}
+      <div className="flex justify-center mt-8 gap-2 flex-wrap items-center">
+        {paginaActual > 1 && (
+          <button
+            onClick={() => setPaginaActual(paginaActual - 1)}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            ← Anterior
+          </button>
+        )}
+        {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((pagina) => (
+          <button
+            key={pagina}
+            onClick={() => setPaginaActual(pagina)}
+            className={`px-3 py-1 rounded ${
+              pagina === paginaActual
+                ? 'bg-lime-600 text-white font-bold'
+                : 'bg-gray-200 hover:bg-gray-300'
+            }`}
+          >
+            {pagina}
+          </button>
+        ))}
+        {paginaActual < totalPaginas && (
+          <button
+            onClick={() => setPaginaActual(paginaActual + 1)}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Siguiente →
+          </button>
+        )}
+      </div>
+    </>
   )
 }
 

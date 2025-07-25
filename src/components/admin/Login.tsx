@@ -1,36 +1,39 @@
-// src/components/admin/Login.tsx
 import { useState } from 'react'
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../../firebase'
+import { auth } from '../../firebase' // ✅ Corrección clave
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
 
     if (!email || !password) {
-      setError('Completa todos los campos.')
+      toast.error('⚠️ Completá todos los campos.')
       return
     }
 
     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailValido.test(email)) {
-      setError('Correo electrónico no válido.')
+      toast.error('Correo electrónico no válido.')
       return
     }
 
+    setLoading(true)
     try {
       await signInWithEmailAndPassword(auth, email, password)
+      toast.success('✅ Sesión iniciada')
       navigate('/admin')
     } catch (err) {
       console.error(err)
-      setError('Credenciales inválidas o error al iniciar sesión.')
+      toast.error('❌ Credenciales inválidas o error al iniciar sesión.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -43,10 +46,6 @@ const Login = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-bambu">
           Login administrador
         </h2>
-
-        {error && (
-          <p className="text-red-500 mb-4 text-sm font-medium">{error}</p>
-        )}
 
         <label htmlFor="email" className="sr-only">Correo electrónico</label>
         <input
@@ -72,9 +71,10 @@ const Login = () => {
 
         <button
           type="submit"
-          className="w-full bg-bambu text-white font-semibold py-2 rounded hover:scale-105 transition-transform"
+          className={`w-full bg-bambu text-white font-semibold py-2 rounded transition-transform ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105'}`}
+          disabled={loading}
         >
-          Iniciar sesión
+          {loading ? 'Ingresando...' : 'Iniciar sesión'}
         </button>
       </form>
     </div>

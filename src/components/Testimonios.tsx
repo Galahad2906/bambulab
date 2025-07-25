@@ -1,34 +1,39 @@
+import { useEffect, useState } from 'react'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from '../firebase'
+
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
-import ana from '../assets/testimonios/ana.jpeg'
-import carlos from '../assets/testimonios/carlos.jpeg'
-import lucia from '../assets/testimonios/lucia.jpeg'
-
-const testimonios = [
-  {
-    nombre: 'Ana G.',
-    mensaje:
-      '¡Quedé encantada con mis productos personalizados! Todo llegó perfecto y súper rápido. 💚',
-    avatar: ana,
-  },
-  {
-    nombre: 'Carlos M.',
-    mensaje:
-      'El diseño de mi marca quedó espectacular. Gracias por la dedicación y creatividad.',
-    avatar: carlos,
-  },
-  {
-    nombre: 'Lucía R.',
-    mensaje:
-      'Bambulab se pasó. La atención fue excelente y los detalles marcaron la diferencia.',
-    avatar: lucia,
-  },
-]
+type Testimonio = {
+  id: string
+  nombre: string
+  mensaje: string
+  avatar: string
+}
 
 const Testimonios = () => {
+  const [testimonios, setTestimonios] = useState<Testimonio[]>([])
+
+  useEffect(() => {
+    const fetchTestimonios = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, 'testimonios'))
+        const datos = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Testimonio[]
+        setTestimonios(datos)
+      } catch (error) {
+        console.error('Error al cargar testimonios:', error)
+      }
+    }
+
+    fetchTestimonios()
+  }, [])
+
   return (
     <section
       className="bg-gray-100 py-20 px-4 sm:px-6 lg:px-8 text-center"
@@ -59,7 +64,7 @@ const Testimonios = () => {
         >
           {testimonios.map((testi, index) => (
             <SwiperSlide
-              key={index}
+              key={testi.id}
               className="mb-6"
               aria-label={`Testimonio de ${testi.nombre}`}
               data-aos="fade-up"

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 import { db } from './firebase'
 import { FaWhatsapp } from 'react-icons/fa'
 import { toast } from 'react-hot-toast'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import { motion } from 'framer-motion'
 
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -16,7 +17,7 @@ import Contacto from './components/Contacto'
 import Login from './components/admin/Login'
 import AdminPanel from './components/admin/AdminPanel'
 import RutaPrivada from './components/ProtectedRoute'
-import Loader from './components/Loader' // Asegurate de tener este componente
+import Loader from './components/Loader'
 
 type Producto = {
   id: string
@@ -32,7 +33,10 @@ function App() {
   const [productos, setProductos] = useState<Producto[]>([])
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todas')
   const [soloDestacados, setSoloDestacados] = useState(false)
-  const [banner, setBanner] = useState<{ mensaje: string; activo: boolean } | null>(null)
+
+  const [banner, setBanner] = useState<{ mensaje?: string; activo: boolean } | null>(null)
+  const [bannerImagen, setBannerImagen] = useState('')
+  const [bannerEnlace, setBannerEnlace] = useState('')
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
@@ -44,7 +48,7 @@ function App() {
       try {
         const [productosSnap, bannerSnap] = await Promise.all([
           getDocs(collection(db, 'productos')),
-          getDoc(doc(db, 'banner', 'principal')),
+          getDocs(collection(db, 'banner')),
         ])
 
         const productosData = productosSnap.docs.map(doc => ({
@@ -53,8 +57,11 @@ function App() {
         })) as Producto[]
         setProductos(productosData)
 
-        if (bannerSnap.exists()) {
-          setBanner(bannerSnap.data() as { mensaje: string; activo: boolean })
+        if (!bannerSnap.empty) {
+          const data = bannerSnap.docs[0].data()
+          setBannerImagen(data.imagen || '')
+          setBannerEnlace(data.enlace || '')
+          setBanner({ activo: data.activo, mensaje: data.mensaje })
         }
       } catch (error) {
         toast.error('Ocurrió un error al cargar datos')
@@ -79,7 +86,36 @@ function App() {
 
   return (
     <div className="overflow-x-hidden">
-      {banner?.activo && (
+      {/* Banner con animación, enlace opcional y estilo responsive */}
+      {banner?.activo && bannerImagen && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full"
+        >
+          {bannerEnlace ? (
+            <a href={bannerEnlace} target="_blank" rel="noopener noreferrer">
+              <img
+                src={bannerImagen}
+                alt="Imagen promocional de Bambulab"
+                className="w-full h-auto max-h-64 sm:max-h-80 object-cover rounded-md shadow hover:opacity-90 transition-opacity"
+                loading="lazy"
+              />
+            </a>
+          ) : (
+            <img
+              src={bannerImagen}
+              alt="Imagen promocional de Bambulab"
+              className="w-full h-auto max-h-64 sm:max-h-80 object-cover rounded-md shadow"
+              loading="lazy"
+            />
+          )}
+        </motion.div>
+      )}
+
+      {/* Mensaje del banner */}
+      {banner?.activo && banner.mensaje && (
         <div className="bg-yellow-100 text-yellow-800 text-center py-2 font-medium shadow">
           {banner.mensaje}
         </div>
