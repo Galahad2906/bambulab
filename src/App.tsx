@@ -80,13 +80,11 @@ function App() {
     )
     .filter(p => (soloDestacados ? p.destacado : true))
 
-  if (cargando) {
-    return <Loader />
-  }
+  if (cargando) return <Loader />
 
   return (
-    <div className="overflow-x-hidden">
-      {/* Banner con animación, enlace opcional y estilo responsive */}
+    <div className="overflow-x-hidden font-sans">
+      {/* Banner superior */}
       {banner?.activo && bannerImagen && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -114,7 +112,7 @@ function App() {
         </motion.div>
       )}
 
-      {/* Mensaje del banner */}
+      {/* Mensaje opcional del banner */}
       {banner?.activo && banner.mensaje && (
         <div className="bg-yellow-100 text-yellow-800 text-center py-2 font-medium shadow">
           {banner.mensaje}
@@ -130,18 +128,15 @@ function App() {
             <>
               <section
                 id="productos"
-                role="region"
-                aria-labelledby="titulo-productos"
                 className="py-20 px-4 sm:px-6 bg-white text-bambu"
                 data-aos="fade-up"
               >
                 <div className="max-w-6xl mx-auto text-center mb-10">
-                  <h2 id="titulo-productos" className="text-3xl font-bold">
-                    Nuestros productos
-                  </h2>
+                  <h2 className="text-3xl font-bold">Nuestros productos</h2>
                   <p className="mt-2 text-gray-700">Diseños únicos hechos a medida</p>
                 </div>
 
+                {/* Filtros */}
                 <div className="flex flex-wrap gap-4 justify-center mb-10">
                   <select
                     className="p-2 border border-gray-300 rounded-md"
@@ -188,6 +183,7 @@ function App() {
                   )}
                 </div>
 
+                {/* Lista de productos */}
                 <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center mx-auto max-w-6xl">
                   {productosFiltrados.length === 0 ? (
                     <p className="col-span-full text-center text-gray-500">
@@ -208,16 +204,10 @@ function App() {
                           loading="lazy"
                         />
                         <div className="p-4">
-                          <h3 className="text-lg font-semibold text-gray-800">
-                            {prod.nombre}
-                          </h3>
-
+                          <h3 className="text-lg font-semibold text-gray-800">{prod.nombre}</h3>
                           {prod.descripcion && (
-                            <p className="text-sm text-gray-700 mt-2">
-                              {prod.descripcion}
-                            </p>
+                            <p className="text-sm text-gray-700 mt-2">{prod.descripcion}</p>
                           )}
-
                           {prod.precio && (
                             <p className="text-sm text-gray-600 mt-1">
                               {prod.precio.toLocaleString()} Gs
@@ -254,7 +244,6 @@ function App() {
             </>
           }
         />
-
         <Route path="/login" element={<Login />} />
         <Route
           path="/admin"

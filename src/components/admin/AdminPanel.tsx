@@ -15,7 +15,7 @@ import {
 import { signOut } from 'firebase/auth'
 import { toast } from 'react-hot-toast'
 
-import { Producto, Testimonio, BannerData, SobreData } from 'types' // ✅
+import { Producto, Testimonio, BannerData, SobreData } from 'types'
 import BannerManager from './BannerManager'
 import SobreEditor from './SobreEditor'
 import TestimoniosManager from './TestimoniosManager'
@@ -24,6 +24,7 @@ import ProductList from './ProductList'
 
 const AdminPanel = () => {
   const navigate = useNavigate()
+  const [tab, setTab] = useState<'productos' | 'testimonios' | 'banner' | 'sobre'>('productos')
 
   // 🛍 Productos
   const [formData, setFormData] = useState({
@@ -76,7 +77,6 @@ const AdminPanel = () => {
       duration: 3000,
     })
 
-  // 🔃 Fetch inicial
   useEffect(() => {
     fetchProductos()
     fetchTestimonios()
@@ -122,7 +122,6 @@ const AdminPanel = () => {
     }
   }
 
-  // 📝 Guardar funciones
   const guardarBanner = async () => {
     try {
       await setDoc(doc(db, 'banner', 'principal'), bannerData)
@@ -259,8 +258,8 @@ const AdminPanel = () => {
 
   return (
     <section className="min-h-screen bg-white text-bambu p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold">Panel de Administración</h2>
+      <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-6 gap-4">
+        <h2 className="text-2xl font-bold text-bambu">Panel de Administración</h2>
         <button
           onClick={handleLogout}
           className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded shadow"
@@ -269,47 +268,78 @@ const AdminPanel = () => {
         </button>
       </div>
 
-      {/* 🔧 Subcomponentes */}
-      <BannerManager
-        bannerData={bannerData}
-        setBannerData={setBannerData}
-        guardarBanner={guardarBanner}
-      />
+      {/* Tabs */}
+      <div className="flex flex-wrap justify-center gap-3 mb-8">
+        {[
+          { key: 'productos', label: '🧾 Productos' },
+          { key: 'testimonios', label: '💬 Testimonios' },
+          { key: 'banner', label: '📸 Banner' },
+          { key: 'sobre', label: '📝 Sobre Bambulab' },
+        ].map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setTab(key as typeof tab)}
+            className={`px-4 py-2 rounded font-semibold border ${
+              tab === key
+                ? 'bg-bambu text-white'
+                : 'bg-white text-bambu border-bambu hover:bg-bambu/10'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
-      <SobreEditor
-        sobreData={sobreData}
-        setSobreData={setSobreData}
-        guardarSobre={guardarSobre}
-      />
+      {/* Secciones */}
+      {tab === 'productos' && (
+        <>
+          <ProductForm
+            formData={formData}
+            setFormData={setFormData}
+            modoEdicion={modoEdicion}
+            resetForm={resetForm}
+            handleSubmit={handleSubmit}
+          />
+          <ProductList
+            productos={productos}
+            paginaActual={paginaActual}
+            setPaginaActual={setPaginaActual}
+            productosPorPagina={productosPorPagina}
+            handleEliminar={handleEliminar}
+            handleEditar={handleEditar}
+          />
+        </>
+      )}
 
-      <TestimoniosManager
-        testimonios={testimonios}
-        testimonioForm={testimonioForm}
-        setTestimonioForm={setTestimonioForm}
-        modoEdicion={modoEdicionTestimonio}
-        setModoEdicion={setModoEdicionTestimonio}
-        idEditando={idEditandoTestimonio}
-        setIdEditando={setIdEditandoTestimonio}
-        guardarTestimonio={guardarTestimonio}
-        eliminarTestimonio={eliminarTestimonio}
-      />
+      {tab === 'testimonios' && (
+        <TestimoniosManager
+          testimonios={testimonios}
+          testimonioForm={testimonioForm}
+          setTestimonioForm={setTestimonioForm}
+          modoEdicion={modoEdicionTestimonio}
+          setModoEdicion={setModoEdicionTestimonio}
+          idEditando={idEditandoTestimonio}
+          setIdEditando={setIdEditandoTestimonio}
+          guardarTestimonio={guardarTestimonio}
+          eliminarTestimonio={eliminarTestimonio}
+        />
+      )}
 
-      <ProductForm
-        formData={formData}
-        setFormData={setFormData}
-        modoEdicion={modoEdicion}
-        resetForm={resetForm}
-        handleSubmit={handleSubmit}
-      />
+      {tab === 'banner' && (
+        <BannerManager
+          bannerData={bannerData}
+          setBannerData={setBannerData}
+          guardarBanner={guardarBanner}
+        />
+      )}
 
-      <ProductList
-        productos={productos}
-        paginaActual={paginaActual}
-        setPaginaActual={setPaginaActual}
-        productosPorPagina={productosPorPagina}
-        handleEliminar={handleEliminar}
-        handleEditar={handleEditar}
-      />
+      {tab === 'sobre' && (
+        <SobreEditor
+          sobreData={sobreData}
+          setSobreData={setSobreData}
+          guardarSobre={guardarSobre}
+        />
+      )}
     </section>
   )
 }

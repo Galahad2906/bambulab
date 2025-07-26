@@ -10,8 +10,8 @@ export default {
         bambu: '#b3cd23', // Verde personalizado de la marca
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'], // Fuente base
-        titulo: ["'Fun City Level 2 Stencil'", 'sans-serif'], // Fuente decorativa opcional
+        sans: ['Poppins', 'sans-serif'], // Fuente base para todo el sitio
+        titulo: ['"Fun City Level 2 Stencil"', 'sans-serif'], // Fuente decorativa opcional
       },
     },
   },
